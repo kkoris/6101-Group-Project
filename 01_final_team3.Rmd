@@ -35,8 +35,33 @@ The variables in the dataset are:
 Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
 ### Import data
-```{r import,results=TRUE}
-Counties_Dataset <- read_excel("Desktop/DAT6101/final/Counties Dataset.xlsx")
+
+```{r, results="markup"}
+Counties = api_rfit('Counties_Data')
+str(Counties_Data)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+1. Summary 
+
+```{r}
+summary(Counties_Data$...59)
+str(Counties_Data$...59)
+```
+
+2. Descriptive Statistics
+
+There are 83 variables in Counties_Data. 
+
+```{r}
+length(Counties_Data)
+```
+
+```{r}
+library(xkablesummary)
+xkablesummary( Counties_Data$...59, title = "Counties Dataset Summary" )
+```
+
+
+
