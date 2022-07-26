@@ -37,7 +37,10 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 
 ```{r, results="markup"}
-Counties = api_rfit('Counties_Data')
+# Counties = api_rfit('Counties_Data')
+# Counties_Data = read.csv("Counties_Data.csv")
+library(readxl)
+Counties_Data = read_excel("Counties_Dataset.xlsx", na = "NA")
 str(Counties_Data)
 ```
 
@@ -46,8 +49,8 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 1. Summary 
 
 ```{r}
-summary(Counties_Data$...59)
-str(Counties_Data$...59)
+summary(Counties_Data$Average.Number.of.Mentally.Unhealthy.Days)
+str(Counties_Data$Average.Number.of.Mentally.Unhealthy.Days)
 ```
 
 2. Descriptive Statistics
@@ -58,10 +61,12 @@ There are 83 variables in Counties_Data.
 length(Counties_Data)
 ```
 
+
 ```{r}
-library(xkablesummary)
-xkablesummary( Counties_Data$...59, title = "Counties Dataset Summary" )
+library(ezids)
+# xkablesummary( Counties_Data[c('Average.Number.of.Mentally.Unhealthy.Days' , 'Mental.Health.Provider.Ratio')], title = "Counties Dataset Summary" )
+xkablesummary( Counties_Data, title = "Counties Dataset Summary" )
 ```
 
-
-
+Data cleaning - check Isaac if not check professor. Lo 
+Pick columns want out of Excel and change header names 
