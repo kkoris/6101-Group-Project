@@ -40,8 +40,8 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 # Counties = api_rfit('Counties_Data')
 # Counties_Data = read.csv("Counties_Data.csv")
 library(readxl)
-Counties_Data = read_excel("Counties_Dataset.xlsx", na = "NA")
-str(Counties_Data)
+Counties_Dataset = read_excel("Counties_Dataset.xlsx", na = "NA")
+str(Counties_Dataset)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
@@ -49,24 +49,19 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 1. Summary 
 
 ```{r}
-summary(Counties_Data$Average.Number.of.Mentally.Unhealthy.Days)
-str(Counties_Data$Average.Number.of.Mentally.Unhealthy.Days)
+summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
+str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
 ```
 
 2. Descriptive Statistics
 
-There are 83 variables in Counties_Data. 
-
-```{r}
-length(Counties_Data)
-```
-
+Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
+#Show ratio of health care providers? Shows outliers in data. 
+#Possibly better to show descriptive statistics of # of covid cases per county in 2020 
 
 ```{r}
 library(ezids)
-# xkablesummary( Counties_Data[c('Average.Number.of.Mentally.Unhealthy.Days' , 'Mental.Health.Provider.Ratio')], title = "Counties Dataset Summary" )
-xkablesummary( Counties_Data, title = "Counties Dataset Summary" )
+xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 'Mental Health Provider Ratio')], title = "Counties Dataset Summary" )
+#xkablesummary( Counties_Dataset, title = "Counties Dataset Summary" )
 ```
 
-Data cleaning - check Isaac if not check professor. Lo 
-Pick columns want out of Excel and change header names 
