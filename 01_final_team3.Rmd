@@ -36,7 +36,16 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 
 ### Import data
 ```{r import,results=TRUE}
-Counties_Dataset <- read_excel("Desktop/DAT6101/final/Counties Dataset.xlsx")
+#install.packages('readxl')
+Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+### built model  
+**To built model with linear regression.** 
+```{r,results=TRUE}
+model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+model
+```
