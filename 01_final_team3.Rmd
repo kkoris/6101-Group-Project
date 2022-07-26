@@ -35,6 +35,7 @@ The variables in the dataset are:
 Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
 ### Import data
+<<<<<<< HEAD
 
 ```{r, results="markup"}
 # Counties = api_rfit('Counties_Data')
@@ -42,10 +43,16 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 library(readxl)
 Counties_Dataset = read_excel("Counties_Dataset.xlsx", na = "NA")
 str(Counties_Dataset)
+=======
+```{r import,results=TRUE}
+#install.packages('readxl')
+Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
+>>>>>>> main
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
+<<<<<<< HEAD
 1. Summary 
 
 ```{r}
@@ -65,3 +72,12 @@ xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 
 #xkablesummary( Counties_Dataset, title = "Counties Dataset Summary" )
 ```
 
+=======
+
+### built model  
+**To built model with linear regression.** 
+```{r,results=TRUE}
+model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+model
+```
+>>>>>>> main
