@@ -38,16 +38,12 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 <<<<<<< HEAD
 
 ```{r, results="markup"}
-# Counties = api_rfit('Counties_Data')
-# Counties_Data = read.csv("Counties_Data.csv")
-library(readxl)
-Counties_Dataset = read_excel("Counties_Dataset.xlsx", na = "NA")
-str(Counties_Dataset)
-```
-
-```{r import,results=TRUE}
-#install.packages('readxl')
-Counties_Dataset <- read.csv('/Users/juliamontiel/Desktop/GRAD SCHOOL/SUMMER 2022 CLASSES/6101-Group-Project/Counties Dataset.csv')
+Counties = api_rfit('Counties_Data')
+Counties_Data = read.csv("Counties_Data.csv")
+str(Counties_Data)
+#library(readxl)
+#Counties_Dataset = read_excel("Counties_Dataset.xlsx", na = "NA")
+#str(Counties_Dataset)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
