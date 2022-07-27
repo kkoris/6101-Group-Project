@@ -47,5 +47,5 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 **To built model with linear regression.** 
 ```{r,results=TRUE}
 model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-model
+#model
 ```
