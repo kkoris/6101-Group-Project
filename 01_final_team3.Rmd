@@ -37,7 +37,7 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 ```{r import,results=TRUE}
 #install.packages('readxl')
-Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
+Counties_Dataset <- read.csv('/Users/juliamontiel/Desktop/GRAD SCHOOL/SUMMER 2022 CLASSES/6101-Group-Project/Counties Dataset.csv')
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
