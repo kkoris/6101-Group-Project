@@ -32,20 +32,70 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 # HW Assignment - Estimation 
 The variables in the dataset are:  
-Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
+Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
 ### Import data
 ```{r import,results=TRUE}
 #install.packages('readxl')
-Counties_Dataset <- read.csv('/Users/juliamontiel/Desktop/GRAD SCHOOL/SUMMER 2022 CLASSES/6101-Group-Project/Counties Dataset.csv')
+Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
+str(Counties_Dataset)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 
 ### built model  
 **To built model with linear regression.** 
 ```{r,results=TRUE}
 model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-model
+summary(model)
+xkabledply(model, title = 'summary of model: Total_cases ~ Mental_Health_Provider_Ratio')
+xkablevif(model)
+print('model did not has problems estimating the coefficient. When we check the p-value, we can see p-value is very high, that mean some county mental health not signifiance for total cases')
+model$coefficients
+```
+
+
+###find best model
+**use AIC to find best fit model**
+```{r,results=TRUE}
+library(MASS)
+model2 <- lm(Total_cases ~ Mental_Health_Provider_Ratio + Smokers + Uninsured + Flu_Vaccinated,Counties_Dataset)
+stepAIC(model2,direction = 'backward')
+model3 <- lm(Total_cases ~ Smokers + Uninsured,Counties_Dataset)
+summary(model3)
+```
+
+#```{r,results=TRUE}
+#library(leaps)
+#leaps <- regsubsets(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset,nbest = 4,really.big=T)
+#plot(leaps,scale = 'adjr2')
+#```
+
+**To built model with logit linear regression.** 
+```{r,results=TRUE}
+model1 <- glm(as.factor(Counties_Dataset$Total_cases) ~ Mental_Health_Provider_Ratio,Counties_Dataset,family = 'binomial')
+summary(model1)
+```
+
+
+###compare two model
+**use anova to compare two models in linear regession.**
+```{r,results=TRUE}
+anovares <- anova(model,model3)
+anovares
+str(anovares)
+xkabledply(anovares, title = "ANOVA comparison between the models")
+```
+
+
+###graph
+```{r,results=TRUE}
+library(ggplot2)
+ggplot(Counties_Dataset, aes(Uninsured, Total_cases)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE)  +
+  coord_cartesian(ylim = c(0, 1))
+ggplot(Counties_Dataset, aes(Uninsured, Total_cases)) +
+  geom_point() +
+  geom_smooth(method = 'glm', se = T, method.args = list(family = 'binomial')) + coord_cartesian(ylim = c(0, 1))
 ```
