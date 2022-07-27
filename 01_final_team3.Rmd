@@ -78,6 +78,6 @@ xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 
 **To built model with linear regression.** 
 ```{r,results=TRUE}
 model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-model
+#model
 ```
 >>>>>>> main
