@@ -119,3 +119,9 @@ plot(model)
 ```
 Team, I think our data is not normal. We can do several things form here. We can try to employ methods that will fix the normality or we may want to change the model of analysis. I am sending you all a note via email.
 
+```{r, results='markup'}
+plot(count_df_clean$Total_cases)
+plot(count_df_clean$`% Severe Housing Problems`)
+plot(count_df_clean$`Population Density per Square mile of Land (2010)`)
+
+```
