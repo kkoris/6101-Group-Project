@@ -37,10 +37,7 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 
 ```{r import,results='markup'}
-#Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
-#library(readr)
 Counties_Dataset <- read.csv("Counties Dataset.csv")
-#View(Counties_Dataset)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
@@ -177,7 +174,7 @@ plot(count_df_clean$`Population Density per Square mile of Land (2010)`)
 
 ```
 
-1. Summary 
+# Summary 
 
 Keep code here Summary and Descriptive Statistics to use later. 
 
@@ -186,7 +183,7 @@ summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
 str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
 ```
 
-2. Descriptive Statistics
+## Descriptive Statistics
 
 Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
 #Show ratio of health care providers? Shows outliers in data. 
