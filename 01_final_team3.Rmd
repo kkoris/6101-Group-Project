@@ -35,9 +35,7 @@ The variables in the dataset are:
 Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
 ### Import data
-```{r import,results=TRUE}
-#install.packages('readxl')
-#Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
+```{r import,results='markup'}
 
 library(readr)
 Counties_Dataset <- read_csv("~/Documents/GitHub/22Sum_Dats6101/6101-Group-Project/Counties Dataset.csv")
@@ -47,11 +45,13 @@ View(Counties_Dataset)
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 ```{r, results='markup'}
-str(Counties_Dataset)
 
 ncol(Counties_Dataset)
 
 nrow(Counties_Dataset)
+
+ncol(count_df_clean)
+nrow(count_df_clean)
 
 ```
 
@@ -98,13 +98,58 @@ ggdensity(count_df_clean$Total_cases,
           main = "Density plot of Total cases",
           xlab = "Total cases")
 
+
+ggdensity(count_df_clean$`Housing: Overcrowding`, 
+          main = "Density plot of Housing Overcrwoding",
+          xlab = "Total cases")
+
 ```
 ```{r, results='markup'}
-qqplot(count_df_clean$`Housing: Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases",
-          xlab = "Average Number of Mentally Unhealth Days")
+#qqplot(count_df_clean$`Housing: Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
+
+cor(count_df_clean$Total_cases, count_df_clean$`Housing: Overcrowding`)
+reg_data <- data.frame(x = count_df_clean$`Housing: Overcrowding`,
+                   y = count_df_clean$Total_cases)
+
+reg_model <- lm(reg_data$y ~ reg_data$x, reg_data)
+
+print(reg_model)
+
+sumstats<-summary(reg_model)
+
+summary(reg_model)
+
+coef(reg_model)
+
+#get list of residuals 
+res <- resid(reg_model)
+
+#produce residual vs. fitted plot
+plot(fitted(reg_model), res)
+plot(fitted(reg_model), res,
+     xlab="Fitted Model", 
+     ylab="Residuals", 
+     main="Residual-Fitted Plot")
+
+
+#create Q-Q plot for residuals
+qqnorm(res,
+     xlab="Normal Values", 
+     ylab="Residuals", 
+     main="Normal Quantile Plot for Residuals")
+
+#add a straight diagonal line to the plot
+qqline(res, col="blue") 
+
+
+
+
 
 ```
+```{r, results='markup'}
+cor(count_df_clean$Total_cases, count_df_clean$`Housing: Overcrowding`)
 
+```
 
 ### built model  
 **To built model with linear regression.** 
@@ -115,7 +160,10 @@ model <- lm(Total_cases ~ `Housing: Overcrowding`,count_df_clean)
 
 ```{r, results='markup'}
 plot(model)
+```
 
+```{r, results='markup'}
+plot(reg_model)
 ```
 Team, I think our data is not normal. We can do several things form here. We can try to employ methods that will fix the normality or we may want to change the model of analysis. I am sending you all a note via email.
 
