@@ -37,11 +37,11 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 ```{r import,results=TRUE}
 #install.packages('readxl')
-#Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
 
-library(readr)
-Counties_Dataset <- read_csv("~/Documents/GitHub/22Sum_Dats6101/6101-Group-Project/Counties Dataset.csv")
-View(Counties_Dataset)
+#Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
+#library(readr)
+Counties_Dataset <- read.csv("Counties Dataset.csv")
+#View(Counties_Dataset)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
@@ -109,6 +109,10 @@ qqplot(count_df_clean$`Housing: Overcrowding`, count_df_clean$Total_cases, main 
 ### built model  
 **To built model with linear regression.** 
 ```{r,results=TRUE}
+#<<<<<<< julia_montiel
+#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+
+
 model <- lm(Total_cases ~ `Housing: Overcrowding`,count_df_clean)
 #model
 ```
@@ -125,3 +129,4 @@ plot(count_df_clean$`% Severe Housing Problems`)
 plot(count_df_clean$`Population Density per Square mile of Land (2010)`)
 
 ```
+
