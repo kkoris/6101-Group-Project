@@ -1,0 +1,101 @@
+---
+title: "01_final"
+author: "Team3"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=FALSE}
+# some of common options (and the defaults) are: 
+# include=T, eval=T, echo=T, results='hide'/'asis'/'markup',..., collapse=F, warning=T, message=T, error=T, cache=T, fig.width=6, fig.height=4, fig.dim=c(6,4) #inches, fig.align='left'/'center','right', 
+library(ezids)
+# knitr::opts_chunk$set(warning = F, results = "markup", message = F)
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+# options(scipen=9, digits = 3) 
+# ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
+# use scipen=999 to prevent scientific notation at all times
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+# HW Assignment - Estimation 
+The variables in the dataset are:  
+Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
+
+### Import data
+```{r import,results=TRUE}
+#install.packages('readxl')
+Counties_Dataset <- read.csv('Counties Dataset.csv')
+str(Counties_Dataset)
+```
+
+
+
+### built model  
+**To built model with linear regression.** 
+```{r,results=TRUE}
+model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+summary(model)
+xkabledply(model, title = 'summary of model: Total_cases ~ Mental_Health_Provider_Ratio')
+xkablevif(model)
+print('model did not has problems estimating the coefficient. When we check the p-value, we can see p-value is very high, that mean some county mental health not signifiance for total cases')
+model$coefficients
+```
+
+
+###find best model
+**use AIC to find best fit model**
+```{r,results=TRUE}
+library(MASS)
+model2 <- lm(Total_cases ~ Mental_Health_Provider_Ratio + Smokers + Uninsured + Flu_Vaccinated,Counties_Dataset)
+stepAIC(model2,direction = 'backward')
+model3 <- lm(Total_cases ~ Smokers + Uninsured,Counties_Dataset)
+summary(model3)
+```
+
+#```{r,results=TRUE}
+#library(leaps)
+#leaps <- regsubsets(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset,nbest = 4,really.big=T)
+#plot(leaps,scale = 'adjr2')
+#```
+
+**To built model with logit linear regression.** 
+```{r,results=TRUE}
+model1 <- glm(as.factor(Counties_Dataset$Total_cases) ~ Mental_Health_Provider_Ratio,Counties_Dataset,family = 'binomial')
+summary(model1)
+```
+
+
+###compare two model
+**use anova to compare two models in linear regession.**
+```{r,results=TRUE}
+anovares <- anova(model,model3)
+anovares
+str(anovares)
+xkabledply(anovares, title = "ANOVA comparison between the models")
+```
+
+
+###graph
+```{r,results=TRUE}
+library(ggplot2)
+ggplot(Counties_Dataset, aes(Uninsured, Total_cases)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE)  +
+  coord_cartesian(ylim = c(0, 1))
+ggplot(Counties_Dataset, aes(Uninsured, Total_cases)) +
+  geom_point() +
+  geom_smooth(method = 'glm', se = T, method.args = list(family = 'binomial')) + coord_cartesian(ylim = c(0, 1))
+```
