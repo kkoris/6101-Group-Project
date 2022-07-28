@@ -35,16 +35,6 @@ The variables in the dataset are:
 Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
 ### Import data
-<<<<<<< HEAD
-
-```{r, results="markup"}
-# Counties = api_rfit('Counties_Data')
-# Counties_Data = read.csv("Counties_Data.csv")
-library(readxl)
-Counties_Dataset = read_excel("Counties_Dataset.xlsx", na = "NA")
-str(Counties_Dataset)
-```
-
 ```{r import,results=TRUE}
 #install.packages('readxl')
 #Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
@@ -56,29 +46,6 @@ View(Counties_Dataset)
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-1. Summary 
-
-```{r}
-summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
-str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
-```
-
-2. Descriptive Statistics
-
-Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
-#Show ratio of health care providers? Shows outliers in data. 
-#Possibly better to show descriptive statistics of # of covid cases per county in 2020 
-
-```{r}
-library(ezids)
-xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 'Mental Health Provider Ratio')], title = "Counties Dataset Summary" )
-#xkablesummary( Counties_Dataset, title = "Counties Dataset Summary" )
-```
-
-=======
-=======
 ```{r, results='markup'}
 str(Counties_Dataset)
 
@@ -133,22 +100,16 @@ ggdensity(count_df_clean$Total_cases,
 
 ```
 ```{r, results='markup'}
-qqplot(count_df_clean$`Average Number of Mentally Unhealthy Days`, count_df_clean$Total_cases, main = "QQ Plot of Total cases",
+qqplot(count_df_clean$`Housing: Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases",
           xlab = "Average Number of Mentally Unhealth Days")
 
 ```
 
->>>>>>> Stashed changes
 
 ### built model  
 **To built model with linear regression.** 
 ```{r,results=TRUE}
-model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-<<<<<<< Updated upstream
-model
-```
->>>>>>> main
-=======
+model <- lm(Total_cases ~ `Housing: Overcrowding`,count_df_clean)
 #model
 ```
 
@@ -156,6 +117,5 @@ model
 plot(model)
 
 ```
-Team, I think our data is not normal. We can several things form here. We can try to employ methods that will fix the normality or we may want to change the model of analysis. I am sending you all a note via email.
+Team, I think our data is not normal. We can do several things form here. We can try to employ methods that will fix the normality or we may want to change the model of analysis. I am sending you all a note via email.
 
->>>>>>> Stashed changes
