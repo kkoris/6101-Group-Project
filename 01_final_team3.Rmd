@@ -37,15 +37,96 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 ```{r import,results=TRUE}
 #install.packages('readxl')
-Counties_Dataset <- read.csv('/Users/juliamontiel/Desktop/GRAD SCHOOL/SUMMER 2022 CLASSES/6101-Group-Project/Counties Dataset.csv')
+
+#Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
+#library(readr)
+Counties_Dataset <- read.csv("Counties Dataset.csv")
+#View(Counties_Dataset)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r, results='markup'}
+str(Counties_Dataset)
+
+ncol(Counties_Dataset)
+
+nrow(Counties_Dataset)
+
+```
+
+There are 71 variables and 3012 observations.
+
+
+Here we are trying to find the NAs in the data frame
+```{r, results='markup'}
+
+sum(is.na(Counties_Dataset))
+
+```
+
+There are 4949 NAs in the data frame
+
+Given the number of variables, we are going to clean the data frame by removing some of the variables that we dont believe to be necessary
+
+```{r, results='markup'}
+
+count_df_updated <- subset(Counties_Dataset, select = -c(4, 5))
+
+
+```
+
+The code below will enable us to remove all NAs from the data set.
+```{r, results=}
+
+count_df_clean<-na.omit(count_df_updated)
+
+nrow(count_df_clean)
+ncol(count_df_clean)
+
+```
+
+Now we have some decisions to make, after removing all NAs, our data frame is reduced from 3012 observations to 669 observations. This may have a negative impact on our conclusions. 
+
+
+Testing for normality
+
+```{r, results='markup'}
+install.packages("ggpubr")
+library("ggpubr")
+ggdensity(count_df_clean$Total_cases, 
+          main = "Density plot of Total cases",
+          xlab = "Total cases")
+
+```
+```{r, results='markup'}
+qqplot(count_df_clean$`Housing: Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases",
+          xlab = "Average Number of Mentally Unhealth Days")
+
+```
 
 
 ### built model  
 **To built model with linear regression.** 
 ```{r,results=TRUE}
-model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+#<<<<<<< julia_montiel
+#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+
+
+model <- lm(Total_cases ~ `Housing: Overcrowding`,count_df_clean)
 #model
 ```
+
+```{r, results='markup'}
+plot(model)
+
+```
+Team, I think our data is not normal. We can do several things form here. We can try to employ methods that will fix the normality or we may want to change the model of analysis. I am sending you all a note via email.
+
+```{r, results='markup'}
+plot(count_df_clean$Total_cases)
+plot(count_df_clean$`% Severe Housing Problems`)
+plot(count_df_clean$`Population Density per Square mile of Land (2010)`)
+
+```
+
