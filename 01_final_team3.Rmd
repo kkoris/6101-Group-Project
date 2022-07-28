@@ -37,23 +37,15 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 
 ```{r import,results='markup'}
-#Counties_Dataset <- read.csv('/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv')
-#library(readr)
 Counties_Dataset <- read.csv("Counties Dataset.csv")
-#View(Counties_Dataset)
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 ```{r, results='markup'}
-
 ncol(Counties_Dataset)
-
 nrow(Counties_Dataset)
-
-ncol(count_df_clean)
-nrow(count_df_clean)
-
 ```
 
 There are 71 variables and 3012 observations.
@@ -74,11 +66,10 @@ Given the number of variables, we are going to clean the data frame by removing 
 
 count_df_updated <- subset(Counties_Dataset, select = -c(4, 5))
 
-
 ```
 
 The code below will enable us to remove all NAs from the data set.
-```{r, results=}
+```{r, results='markup'}
 
 count_df_clean<-na.omit(count_df_updated)
 
@@ -93,15 +84,13 @@ Now we have some decisions to make, after removing all NAs, our data frame is re
 Testing for normality
 
 ```{r, results='markup'}
-install.packages("ggpubr")
+#install.packages("ggpubr")
 library("ggpubr")
 ggdensity(count_df_clean$Total_cases, 
           main = "Density plot of Total cases",
           xlab = "Total cases")
 
-
-ggdensity(count_df_clean$`Housing: Overcrowding`, 
-          main = "Density plot of Housing Overcrwoding",
+ggdensity(count_df_clean$Housing..Overcrowding, main = "Density plot of Housing Overcrwoding",
           xlab = "Total cases")
 
 ```
