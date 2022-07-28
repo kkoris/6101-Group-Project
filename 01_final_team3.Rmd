@@ -146,8 +146,6 @@ cor(count_df_clean$Total_cases, count_df_clean$`Housing: Overcrowding`)
 ```{r,results=TRUE}
 #<<<<<<< julia_montiel
 #model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-
-
 model <- lm(Total_cases ~ `Housing: Overcrowding`,count_df_clean)
 #model
 ```
