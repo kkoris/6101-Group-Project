@@ -35,6 +35,7 @@ The variables in the dataset are:
 Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
 ### Import data
+
 ```{r import,results=TRUE}
 #install.packages('readxl')
 
@@ -111,8 +112,6 @@ qqplot(count_df_clean$`Housing: Overcrowding`, count_df_clean$Total_cases, main 
 ```{r,results=TRUE}
 #<<<<<<< julia_montiel
 #model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-
-
 model <- lm(Total_cases ~ `Housing: Overcrowding`,count_df_clean)
 #model
 ```
