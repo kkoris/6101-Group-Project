@@ -37,7 +37,9 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 
 ```{r import,results='markup'}
+
 Counties_Dataset <- read.csv("Counties Dataset.csv")
+
 
 ```
 
@@ -75,7 +77,7 @@ colnames(new_clean)<- c("Totalcases","Deaths","Population", "Blacks","Natives","
 #####Removing NAs from the data frame
 
 ```{r, results='markup'}
-clean<-clean[, -c(20)]
+
 clean<- na.omit(new_clean) 
 
 ```
@@ -176,21 +178,130 @@ qqline(res, col="blue")
 
 ```
 
-####Team please note the new variable names above as you create the new model.
-#### I have also cleaned out the old codes and only left the code we need for this assignment.
-
-### built model  
-**To built model with linear regression.** 
-```{r,results=TRUE}
-#<<<<<<< julia_montiel
-#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-#model <- lm(Total_cases ~ Housing..Overcrowding,count_df_clean)
-#model
-```
-
 
 
 ```{r, results='markup'}
 plot(reg_model)
+```
+
+
+
+####Team please note the new variable names above as you create the new model.
+#### I have also cleaned out the old codes and only left the code we need for this assignment.
+
+### built model  
+**To built good fit model with linear regression.** 
+```{r,results=TRUE}
+
+library(MASS)
+model <- lm(Totcaspopn ~ Deaths + Population + Blacks + Natives + Asians + Hispanics + White + PoorHlth + Menunhlthdays + Smokers + Fluvax + RespDisease, clean)
+stepAIC(model,direction = 'backward')
+print('lm(formula = Totcaspopn ~ Deaths + Population + Blacks + Asians + 
+    PoorHlth + Menunhlthdays + Smokers, clean) is good fit model')
+model1 <- lm(Totcaspopn ~ Deaths + Population + Blacks + Asians + 
+    PoorHlth + Menunhlthdays + Smokers, clean)
+summary(model1)
+model1$coefficients
+xkabledply(confint(model1))
+xkablevif(model1)
+plot(model1)
+
+#<<<<<<< julia_montiel
+#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+#model <- lm(Total_cases ~ Housing..Overcrowding,count_df_clean)
+#model
+
+```
+
+
+
+
+### built model with single variable
+```{r, results=TRUE}
+print('model2')
+model2 <- lm(Totcaspopn ~ Population + Menunhlthdays, clean)
+summary(model2)
+model2$coefficients
+xkabledply(confint(model2),title = 'model2')
+xkablevif(model2,title = 'model2')
+plot(model2,main = 'madel2')
+print('model3')
+model3 <- lm(Totcaspopn ~ Population + Smokers, clean)
+summary(model3)
+model3$coefficients
+xkabledply(confint(model3),title = 'model3')
+xkablevif(model3,title = 'model3')
+plot(model3,main = 'madel3')
+print('model4')
+model4 <- lm(Totcaspopn ~ Population + PoorHlth, clean)
+summary(model4)
+model4$coefficients
+xkabledply(confint(model4),title = 'model4')
+xkablevif(model4,title = 'model4')
+plot(model4, main = 'madel4')
+```
+
+
+
+### compare three single model
+```{r, results=TRUE}
+anovares <- anova(model2,model3,model4)
+anovares
+str(anovares)
+xkabledply(anovares, title = "ANOVA comparison between the models")
+```
+
+
+### graph
+```{r,results=TRUE}
+library(ggplot2)
+ggplot(clean, aes(Smokers, Totcaspopn)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE)  +
+  coord_cartesian(ylim = c(0, 0.25))
+ggplot(clean, aes(Smokers, Totcaspopn)) +
+  geom_point() +
+  geom_smooth(method = 'glm', se = T, method.args = list(family = 'binomial')) + coord_cartesian(ylim = c(0, 0.25))
+
+```
+
+
+### check for cor.test
+```{r, results=TRUE}
+cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="pearson")
+cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="spearman")
+```
+
+
+### t test
+```{r,results=TRUE}
+t_test.ts80 = t.test(x=clean$Totcaspopn, conf.level=0.80)
+t_test.ts80
+t_test.ts80$conf.int
+t_test.ts80$alternative
+t_test.ts80$estimate
+t_test.ts99 = t.test(x=clean$Totcaspopn, conf.level=0.99)
+t_test.ts99
+t_test.ts99$conf.int
+t_test.ts99$alternative
+t_test.ts99$estimate
+```
+
+
+### glm model
+```{r,results=TRUE}
+library(pROC)
+model5 <- glm(Totcaspopn ~ Fluvax + Smokers, data = clean, family = "binomial")
+summary(model5)
+xkabledply(model5, title = paste("Logistic Regression :", format(formula(model5)) ))
+expcoeff = exp(coef(model5))
+xkabledply( as.table(expcoeff), title = "Exponential of coefficients in Logit Reg" , wide=T)
+xkabledply( confint(model5), title = 'confidence interval of model' )
+prob=predict(model5, type = 'response' )
+clean$prob=prob
+roc1 <- roc(Totcaspopn~prob, data=clean)
+auc(roc1) # area-under-curve prefer 0.8 or higher.
+plot(roc1)
+
 ```
 
