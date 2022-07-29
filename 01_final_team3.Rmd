@@ -94,10 +94,10 @@ ggdensity(count_df_clean$Housing..Overcrowding, main = "Density plot of Housing 
 
 ```
 ```{r, results='markup'}
-#qqplot(count_df_clean$`Housing: Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
+#qqplot(count_df_clean$`Housing..Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
 
-cor(count_df_clean$Total_cases, count_df_clean$`Housing: Overcrowding`)
-reg_data <- data.frame(x = count_df_clean$`Housing: Overcrowding`,
+cor(count_df_clean$Total_cases, count_df_clean$`Housing..Overcrowding`)
+reg_data <- data.frame(x = count_df_clean$`Housing..Overcrowding`,
                    y = count_df_clean$Total_cases)
 
 reg_model <- lm(reg_data$y ~ reg_data$x, reg_data)
@@ -145,7 +145,7 @@ cor(count_df_clean$Total_cases, count_df_clean$`Housing: Overcrowding`)
 ```{r,results=TRUE}
 #<<<<<<< julia_montiel
 #model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-model <- lm(Total_cases ~ `Housing: Overcrowding`,count_df_clean)
+model <- lm(Total_cases ~ `Housing..Overcrowding`,count_df_clean)
 #model
 ```
 
