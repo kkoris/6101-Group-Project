@@ -37,7 +37,9 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 
 ```{r import,results='markup'}
-Counties_Dataset <- read.csv("/Users/williamyu/Desktop/DAT6101/final/Counties Dataset.csv")
+
+Counties_Dataset <- read.csv("Counties Dataset.csv")
+
 
 ```
 
@@ -177,9 +179,11 @@ qqline(res, col="blue")
 ```
 
 
+
 ```{r, results='markup'}
 plot(reg_model)
 ```
+
 
 
 ####Team please note the new variable names above as you create the new model.
@@ -188,6 +192,7 @@ plot(reg_model)
 ### built model  
 **To built good fit model with linear regression.** 
 ```{r,results=TRUE}
+
 library(MASS)
 model <- lm(Totcaspopn ~ Deaths + Population + Blacks + Natives + Asians + Hispanics + White + PoorHlth + Menunhlthdays + Smokers + Fluvax + RespDisease, clean)
 stepAIC(model,direction = 'backward')
@@ -200,7 +205,14 @@ model1$coefficients
 xkabledply(confint(model1))
 xkablevif(model1)
 plot(model1)
+
+#<<<<<<< julia_montiel
+#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+#model <- lm(Total_cases ~ Housing..Overcrowding,count_df_clean)
+#model
+
 ```
+
 
 
 
@@ -290,5 +302,6 @@ clean$prob=prob
 roc1 <- roc(Totcaspopn~prob, data=clean)
 auc(roc1) # area-under-curve prefer 0.8 or higher.
 plot(roc1)
+
 ```
 
