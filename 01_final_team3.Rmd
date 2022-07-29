@@ -75,7 +75,7 @@ colnames(new_clean)<- c("Totalcases","Deaths","Population", "Blacks","Natives","
 #####Removing NAs from the data frame
 
 ```{r, results='markup'}
-
+clean<-clean[, -c(20)]
 clean<- na.omit(new_clean) 
 
 ```
