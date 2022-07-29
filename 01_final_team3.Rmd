@@ -37,48 +37,85 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 
 ```{r import,results='markup'}
+
 Counties_Dataset <- read.csv("Counties Dataset.csv")
+
 
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
+### Data cleaning
+###Removing characters from data frame
+
 ```{r, results='markup'}
-ncol(Counties_Dataset)
-nrow(Counties_Dataset)
-```
-
-There are 71 variables and 3012 observations.
-
-
-Here we are trying to find the NAs in the data frame
-```{r, results='markup'}
-
-sum(is.na(Counties_Dataset))
+new_Coundf<-Counties_Dataset[, !sapply(Counties_Dataset, is.character)]
 
 ```
 
-There are 4949 NAs in the data frame
-
-Given the number of variables, we are going to clean the data frame by removing some of the variables that we dont believe to be necessary
+###Dropping some columns
 
 ```{r, results='markup'}
 
-count_df_updated <- subset(Counties_Dataset, select = -c(4, 5))
+new_df <- new_Coundf[ , -c(1,2,6,7,19,22,23,24,26,27,29,30,31,32,33,34,41,45,46,48,49) ]
+
+new_df1<-new_df[, -c(16,20,21,22,23,27,28,31,32,33,34,35 )]
+
+new_clean<-new_df1[, -c(10,11,12)]
 
 ```
 
-The code below will enable us to remove all NAs from the data set.
+
+#### Changing Column names
+
+```{r, results='markup'}
+colnames(new_clean)<- c("Totalcases","Deaths","Population", "Blacks","Natives","Asians","Hispanics","White","PDSqmile","HDSqmile","ColEduc","Socialize","HseCrowded","Diabetic","PoorHlth","Menunhlthdays","Smokers","Fluvax","RespDisease")
+
+
+```
+
+#####Removing NAs from the data frame
+
 ```{r, results='markup'}
 
-count_df_clean<-na.omit(count_df_updated)
-
-nrow(count_df_clean)
-ncol(count_df_clean)
+clean<- na.omit(new_clean) 
 
 ```
 
-Now we have some decisions to make, after removing all NAs, our data frame is reduced from 3012 observations to 669 observations. This may have a negative impact on our conclusions. 
+####Creating a new Y variable
+
+```{r, results='markup'}
+clean$Totcaspopn<-clean$Totalcases/clean$Population
+
+```
+
+####Creating a Correlation Matrix
+
+
+
+```{r, results='markup'}
+#install.packages("Hmisc")
+library(Hmisc)
+
+corClean<-cor(as.matrix(clean))
+
+```
+
+####Correlation Matrix
+
+```{r, results='markup'}
+xkabledply(corClean)
+
+```
+
+
+```{r, results='markup'}
+#install.packages("corrplot")
+library(corrplot)
+corrplot(corClean)
+
+```
+
 
 
 Testing for normality
@@ -86,20 +123,28 @@ Testing for normality
 ```{r, results='markup'}
 #install.packages("ggpubr")
 library("ggpubr")
-ggdensity(count_df_clean$Total_cases, 
-          main = "Density plot of Total cases",
+ggdensity(clean$Totcaspopn, 
+          main = "Density plot of Total cases per Population",
           xlab = "Total cases")
 
-ggdensity(count_df_clean$Housing..Overcrowding, main = "Density plot of Housing Overcrwoding",
+ggdensity(clean$Population, main = "Density plot of Population",
           xlab = "Total cases")
 
 ```
-```{r, results='markup'}
-#qqplot(count_df_clean$`Housing: Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
 
-cor(count_df_clean$Total_cases, count_df_clean$`Housing: Overcrowding`)
-reg_data <- data.frame(x = count_df_clean$`Housing: Overcrowding`,
-                   y = count_df_clean$Total_cases)
+###QQ Plot
+
+```{r, results='markup'}
+qqplot(clean$Totcaspopn, clean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
+
+```
+
+####Sample Model
+
+```{r, results='markup'}
+
+reg_data <- data.frame(x = clean$Population,
+                   y = clean$Totcaspopn)
 
 reg_model <- lm(reg_data$y ~ reg_data$x, reg_data)
 
@@ -131,38 +176,132 @@ qqnorm(res,
 #add a straight diagonal line to the plot
 qqline(res, col="blue") 
 
-
-
-
-
-```
-```{r, results='markup'}
-cor(count_df_clean$Total_cases, count_df_clean$`Housing: Overcrowding`)
-
 ```
 
-### built model  
-**To built model with linear regression.** 
-```{r,results=TRUE}
-#<<<<<<< julia_montiel
-#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-model <- lm(Total_cases ~ `Housing: Overcrowding`,count_df_clean)
-#model
-```
 
-```{r, results='markup'}
-plot(model)
-```
 
 ```{r, results='markup'}
 plot(reg_model)
 ```
-Team, I think our data is not normal. We can do several things form here. We can try to employ methods that will fix the normality or we may want to change the model of analysis. I am sending you all a note via email.
 
-```{r, results='markup'}
-plot(count_df_clean$Total_cases)
-plot(count_df_clean$`% Severe Housing Problems`)
-plot(count_df_clean$`Population Density per Square mile of Land (2010)`)
+
+
+####Team please note the new variable names above as you create the new model.
+#### I have also cleaned out the old codes and only left the code we need for this assignment.
+
+### built model  
+**To built good fit model with linear regression.** 
+```{r,results=TRUE}
+
+library(MASS)
+model <- lm(Totcaspopn ~ Deaths + Population + Blacks + Natives + Asians + Hispanics + White + PoorHlth + Menunhlthdays + Smokers + Fluvax + RespDisease, clean)
+stepAIC(model,direction = 'backward')
+print('lm(formula = Totcaspopn ~ Deaths + Population + Blacks + Asians + 
+    PoorHlth + Menunhlthdays + Smokers, clean) is good fit model')
+model1 <- lm(Totcaspopn ~ Deaths + Population + Blacks + Asians + 
+    PoorHlth + Menunhlthdays + Smokers, clean)
+summary(model1)
+model1$coefficients
+xkabledply(confint(model1))
+xkablevif(model1)
+plot(model1)
+
+#<<<<<<< julia_montiel
+#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+#model <- lm(Total_cases ~ Housing..Overcrowding,count_df_clean)
+#model
+
+```
+
+
+
+
+### built model with single variable
+```{r, results=TRUE}
+print('model2')
+model2 <- lm(Totcaspopn ~ Population + Menunhlthdays, clean)
+summary(model2)
+model2$coefficients
+xkabledply(confint(model2),title = 'model2')
+xkablevif(model2,title = 'model2')
+plot(model2,main = 'madel2')
+print('model3')
+model3 <- lm(Totcaspopn ~ Population + Smokers, clean)
+summary(model3)
+model3$coefficients
+xkabledply(confint(model3),title = 'model3')
+xkablevif(model3,title = 'model3')
+plot(model3,main = 'madel3')
+print('model4')
+model4 <- lm(Totcaspopn ~ Population + PoorHlth, clean)
+summary(model4)
+model4$coefficients
+xkabledply(confint(model4),title = 'model4')
+xkablevif(model4,title = 'model4')
+plot(model4, main = 'madel4')
+```
+
+
+
+### compare three single model
+```{r, results=TRUE}
+anovares <- anova(model2,model3,model4)
+anovares
+str(anovares)
+xkabledply(anovares, title = "ANOVA comparison between the models")
+```
+
+
+### graph
+```{r,results=TRUE}
+library(ggplot2)
+ggplot(clean, aes(Smokers, Totcaspopn)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE)  +
+  coord_cartesian(ylim = c(0, 0.25))
+ggplot(clean, aes(Smokers, Totcaspopn)) +
+  geom_point() +
+  geom_smooth(method = 'glm', se = T, method.args = list(family = 'binomial')) + coord_cartesian(ylim = c(0, 0.25))
+
+```
+
+
+### check for cor.test
+```{r, results=TRUE}
+cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="pearson")
+cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="spearman")
+```
+
+
+### t test
+```{r,results=TRUE}
+t_test.ts80 = t.test(x=clean$Totcaspopn, conf.level=0.80)
+t_test.ts80
+t_test.ts80$conf.int
+t_test.ts80$alternative
+t_test.ts80$estimate
+t_test.ts99 = t.test(x=clean$Totcaspopn, conf.level=0.99)
+t_test.ts99
+t_test.ts99$conf.int
+t_test.ts99$alternative
+t_test.ts99$estimate
+```
+
+
+### glm model
+```{r,results=TRUE}
+library(pROC)
+model5 <- glm(Totcaspopn ~ Fluvax + Smokers, data = clean, family = "binomial")
+summary(model5)
+xkabledply(model5, title = paste("Logistic Regression :", format(formula(model5)) ))
+expcoeff = exp(coef(model5))
+xkabledply( as.table(expcoeff), title = "Exponential of coefficients in Logit Reg" , wide=T)
+xkabledply( confint(model5), title = 'confidence interval of model' )
+prob=predict(model5, type = 'response' )
+clean$prob=prob
+roc1 <- roc(Totcaspopn~prob, data=clean)
+auc(roc1) # area-under-curve prefer 0.8 or higher.
+plot(roc1)
 
 ```
 
