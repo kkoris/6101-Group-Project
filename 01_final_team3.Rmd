@@ -303,6 +303,39 @@ plot(roc1)
 
 ```
 
+#Linear Model: 
+Totcaspopn 
+
+Feature selection: 
+```{r}
+loadPkg("leaps")
+#This is essentially best fit 
+reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population, data = clean, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
+#The plot will show the Adjust R^2 when using the variables across the bottom
+plot(reg.best10, scale = "adjr2", main = "Exhaustive: Adjusted R^2")
+plot(reg.best10, scale = "r2", main = "Exhaustive: R^2")
+# In the "leaps" package, we can use scale=c("bic","Cp","adjr2","r2")
+plot(reg.best10, scale = "bic", main = "Exhaustive: BIC")
+plot(reg.best10, scale = "Cp", main = "Exhaustive: Cp")
+summary(reg.best10)
+```
+
+```{r}
+Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = clean)
+summary(Totcaspopn.lm)
+```
+
+There is negative correlation between mental health days and Totcaspopn. With every 1 increase in mental health days there is a -8.18e-05 decrease in total cases population (describe p-value significance). 
+
+```{r}
+xkablevif(Totcaspopn.lm)
+```
+
+# Try with tree model - depend on levels tree / depth 
+
+vif - check after linear model built check VIF values 
+Total cases / population = populationnew + independent variables 
+
 # Summary 
 
 Keep code here Summary and Descriptive Statistics to use later. 
