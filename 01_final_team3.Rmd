@@ -37,10 +37,7 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 
 ```{r import,results='markup'}
-
 Counties_Dataset <- read.csv("Counties Dataset.csv")
-
-
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
@@ -50,7 +47,6 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ```{r, results='markup'}
 new_Coundf<-Counties_Dataset[, !sapply(Counties_Dataset, is.character)]
-
 ```
 
 ###Dropping some columns
@@ -77,16 +73,13 @@ colnames(new_clean)<- c("Totalcases","Deaths","Population", "Blacks","Natives","
 #####Removing NAs from the data frame
 
 ```{r, results='markup'}
-
 clean<- na.omit(new_clean) 
-
 ```
 
 ####Creating a new Y variable
 
 ```{r, results='markup'}
 clean$Totcaspopn<-clean$Totalcases/clean$Population
-
 ```
 
 ####Creating a Correlation Matrix
@@ -96,16 +89,13 @@ clean$Totcaspopn<-clean$Totalcases/clean$Population
 ```{r, results='markup'}
 #install.packages("Hmisc")
 library(Hmisc)
-
 corClean<-cor(as.matrix(clean))
-
 ```
 
 ####Correlation Matrix
 
 ```{r, results='markup'}
 xkabledply(corClean)
-
 ```
 
 
@@ -113,7 +103,6 @@ xkabledply(corClean)
 #install.packages("corrplot")
 library(corrplot)
 corrplot(corClean)
-
 ```
 
 
@@ -131,12 +120,18 @@ ggdensity(clean$Population, main = "Density plot of Population",
           xlab = "Total cases")
 
 ```
+<<<<<<< HEAD
+```{r, results='markup'}
+#qqplot(count_df_clean$`Housing..Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
+
+cor(count_df_clean$Total_cases, count_df_clean$`Housing..Overcrowding`)
+reg_data <- data.frame(x = count_df_clean$`Housing..Overcrowding`,
+                   y = count_df_clean$Total_cases)
 
 ###QQ Plot
 
 ```{r, results='markup'}
 qqplot(clean$Totcaspopn, clean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
-
 ```
 
 ####Sample Model
@@ -177,13 +172,18 @@ qqnorm(res,
 qqline(res, col="blue") 
 
 ```
-
-
+### built model  
+**To built model with linear regression.** 
+```{r,results=TRUE}
+#<<<<<<< julia_montiel
+#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+model <- lm(Total_cases ~ `Housing..Overcrowding`,count_df_clean)
+#model
+```
 
 ```{r, results='markup'}
 plot(reg_model)
 ```
-
 
 
 ####Team please note the new variable names above as you create the new model.
@@ -212,8 +212,6 @@ plot(model1)
 #model
 
 ```
-
-
 
 
 ### built model with single variable
@@ -305,3 +303,56 @@ plot(roc1)
 
 ```
 
+#Linear Model: 
+Totcaspopn 
+
+Feature selection: 
+```{r}
+loadPkg("leaps")
+#This is essentially best fit 
+reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population, data = clean, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
+#The plot will show the Adjust R^2 when using the variables across the bottom
+plot(reg.best10, scale = "adjr2", main = "Exhaustive: Adjusted R^2")
+plot(reg.best10, scale = "r2", main = "Exhaustive: R^2")
+# In the "leaps" package, we can use scale=c("bic","Cp","adjr2","r2")
+plot(reg.best10, scale = "bic", main = "Exhaustive: BIC")
+plot(reg.best10, scale = "Cp", main = "Exhaustive: Cp")
+summary(reg.best10)
+```
+
+```{r}
+Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = clean)
+summary(Totcaspopn.lm)
+```
+
+There is negative correlation between mental health days and Totcaspopn. With every 1 increase in mental health days there is a -8.18e-05 decrease in total cases population (describe p-value significance). 
+
+```{r}
+xkablevif(Totcaspopn.lm)
+```
+
+# Try with tree model - depend on levels tree / depth 
+
+vif - check after linear model built check VIF values 
+Total cases / population = populationnew + independent variables 
+
+# Summary 
+
+Keep code here Summary and Descriptive Statistics to use later. 
+
+```{r eval=FALSE}
+summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
+str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
+```
+
+## Descriptive Statistics
+
+Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
+#Show ratio of health care providers? Shows outliers in data. 
+#Possibly better to show descriptive statistics of # of covid cases per county in 2020 
+
+```{r eval=FALSE}
+library(ezids)
+xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 'Mental Health Provider Ratio')], title = "Counties Dataset Summary" )
+#xkablesummary( Counties_Dataset, title = "Counties Dataset Summary" )
+```
