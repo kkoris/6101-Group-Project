@@ -37,7 +37,9 @@ Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hi
 ### Import data
 
 ```{r import,results='markup'}
+
 Counties_Dataset <- read.csv("Counties Dataset.csv")
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
@@ -120,7 +122,7 @@ ggdensity(clean$Population, main = "Density plot of Population",
           xlab = "Total cases")
 
 ```
-<<<<<<< HEAD
+
 ```{r, results='markup'}
 #qqplot(count_df_clean$`Housing..Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
 
@@ -289,6 +291,7 @@ t_test.ts99$estimate
 ### glm model
 ```{r,results=TRUE}
 library(pROC)
+library(pscl)
 model5 <- glm(Totcaspopn ~ Fluvax + Smokers, data = clean, family = "binomial")
 summary(model5)
 xkabledply(model5, title = paste("Logistic Regression :", format(formula(model5)) ))
@@ -300,7 +303,7 @@ clean$prob=prob
 roc1 <- roc(Totcaspopn~prob, data=clean)
 auc(roc1) # area-under-curve prefer 0.8 or higher.
 plot(roc1)
-
+pR2(model5)
 ```
 
 #Linear Model: 
@@ -320,6 +323,25 @@ plot(reg.best10, scale = "Cp", main = "Exhaustive: Cp")
 summary(reg.best10)
 ```
 
+
+#Linear Model: 
+Totcaspopn 
+
+Feature selection: 
+```{r}
+loadPkg("leaps")
+#This is essentially best fit 
+reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population, data = clean, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
+#The plot will show the Adjust R^2 when using the variables across the bottom
+plot(reg.best10, scale = "adjr2", main = "Exhaustive: Adjusted R^2")
+plot(reg.best10, scale = "r2", main = "Exhaustive: R^2")
+# In the "leaps" package, we can use scale=c("bic","Cp","adjr2","r2")
+plot(reg.best10, scale = "bic", main = "Exhaustive: BIC")
+plot(reg.best10, scale = "Cp", main = "Exhaustive: Cp")
+summary(reg.best10)
+```
+
+
 ```{r}
 Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = clean)
 summary(Totcaspopn.lm)
@@ -332,6 +354,23 @@ xkablevif(Totcaspopn.lm)
 ```
 
 # Try with tree model - depend on levels tree / depth 
+
+```{r,results=TRUE}
+#install.packages('randomForest')
+#library(randomForest)
+library(rpart)
+set.seed(1)
+fit <- rpart(Totcaspopn ~ Deaths + Population + Blacks + Asians + PoorHlth + Menunhlthdays + Smokers, clean, method="class", control = list(maxdepth = 5) )
+
+printcp(fit)
+plotcp(fit)
+summary(fit)
+#plot tree
+#plot(fit, uniform=TRUE, main="Classification Tree for Churn")
+#text(fit, use.n=TRUE, all=TRUE, cex=.8)
+
+#please modify this and after monday meet with professor to built the tree 
+```
 
 vif - check after linear model built check VIF values 
 Total cases / population = populationnew + independent variables 
