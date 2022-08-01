@@ -34,6 +34,8 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 The variables in the dataset are:  
 Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
+###Research Question - Does mentally unhealthy days, race(Black), education, housing and smoking status indicative of total COVID cases in population?
+
 ### Import data
 
 ```{r import,results='markup'}
@@ -68,8 +70,6 @@ new_clean<-new_df1[, -c(10,11,12)]
 
 ```{r, results='markup'}
 colnames(new_clean)<- c("Totalcases","Deaths","Population", "Blacks","Natives","Asians","Hispanics","White","PDSqmile","HDSqmile","ColEduc","Socialize","HseCrowded","Diabetic","PoorHlth","Menunhlthdays","Smokers","Fluvax","RespDisease")
-
-
 ```
 
 #####Removing NAs from the data frame
@@ -85,8 +85,8 @@ clean$Totcaspopn<-clean$Totalcases/clean$Population
 ```
 
 ```{r eval=FALSE}
-summary(clean$`Average Number of Mentally Unhealthy Days`)
-str(clean$`Average Number of Mentally Unhealthy Days`)
+summary(clean)
+str(clean)
 ```
 
 ## Descriptive Statistics
@@ -105,6 +105,7 @@ xkablesummary(clean, title = "Summary of COVID Data")
 =======
 
 ```{r, results='markup'}
+install.packages(Hmisc)
 library(Hmisc)
 corClean<-cor(as.matrix(clean))
 ```
