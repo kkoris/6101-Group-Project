@@ -85,7 +85,6 @@ clean$Totcaspopn<-clean$Totalcases/clean$Population
 ```
 
 
-<<<<<<< HEAD
 # Summary 
 # Try with tree model - depend on levels tree / depth 
 # Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers
@@ -106,7 +105,6 @@ Below the descriptive statistics for the number of Mentally Unhealthy Days per c
 =======
 ## Descriptive Statistics
 
->>>>>>> dfc068d227cb9ebe2b3489c4cffc05b800e91293
 ```{r eval=FALSE}
 library(ezids)
 xkablesummary(clean, title = "Summary of COVID Data")
@@ -116,10 +114,6 @@ str(clean)
 
 ####Creating a Correlation Matrix
 
-<<<<<<< HEAD
-
-=======
->>>>>>> dfc068d227cb9ebe2b3489c4cffc05b800e91293
 ```{r, results='markup'}
 library(Hmisc)
 corClean<-cor(as.matrix(clean))
@@ -201,6 +195,7 @@ plot(reg_model)
 ```
 
 ##To built good fit model with linear regression.** 
+# Not sure if we need this since we did feature selection
 ```{r,results=TRUE}
 library(MASS)
 model <- lm(Totcaspopn ~ Deaths + Population + Blacks + Natives + Asians + Hispanics + White + PoorHlth + Menunhlthdays + Smokers + Fluvax + RespDisease, clean)
@@ -242,7 +237,6 @@ xkabledply(confint(model4),title = 'model4')
 xkablevif(model4,title = 'model4')
 plot(model4, main = 'madel4')
 ```
-
 
 
 ### compare three single model
@@ -308,7 +302,7 @@ plot(roc1)
 pR2(model5)
 ```
 
-#Linear Model: 
+#Feature Selection: Linear Model: 
 Totcaspopn 
 Feature selection: 
 ```{r}
@@ -355,7 +349,6 @@ There is negative correlation between mental health days and Totcaspopn. With ev
 xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
-<<<<<<< HEAD
 # Try with tree model - depend on levels tree / depth 
 # Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers
 # for descriptive & summary statistics
