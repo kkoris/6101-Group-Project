@@ -84,42 +84,27 @@ clean<- na.omit(new_clean)
 clean$Totcaspopn<-clean$Totalcases/clean$Population
 ```
 
-
-<<<<<<< HEAD
-# Summary 
-# Try with tree model - depend on levels tree / depth 
-# Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers
-# for descriptive & summary statistics
-# Keep code here Summary and Descriptive Statistics to use later. 
-
 ```{r eval=FALSE}
-summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
-str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
+summary(clean$`Average Number of Mentally Unhealthy Days`)
+str(clean$`Average Number of Mentally Unhealthy Days`)
 ```
 
 ## Descriptive Statistics
 
-Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
-
-#Possibly better to show descriptive statistics of # of covid cases per county in 2020 
+## Make sure to include these in the descriptive stats Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
 
 =======
 ## Descriptive Statistics
 
->>>>>>> dfc068d227cb9ebe2b3489c4cffc05b800e91293
 ```{r eval=FALSE}
 library(ezids)
 xkablesummary(clean, title = "Summary of COVID Data")
-str(clean)
 ```
 
-
 ####Creating a Correlation Matrix
-
-<<<<<<< HEAD
-
+##include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
 =======
->>>>>>> dfc068d227cb9ebe2b3489c4cffc05b800e91293
+
 ```{r, results='markup'}
 library(Hmisc)
 corClean<-cor(as.matrix(clean))
@@ -244,7 +229,6 @@ plot(model4, main = 'madel4')
 ```
 
 
-
 ### compare three single model
 ```{r, results=TRUE}
 anovares <- anova(model2,model3,model4)
@@ -252,7 +236,6 @@ anovares
 str(anovares)
 xkabledply(anovares, title = "ANOVA comparison between the models")
 ```
-
 
 ### graph
 ```{r,results=TRUE}
@@ -355,14 +338,7 @@ There is negative correlation between mental health days and Totcaspopn. With ev
 xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
-<<<<<<< HEAD
-# Try with tree model - depend on levels tree / depth 
-# Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers
-# for descriptive & summary statistics
-
-=======
 ####Try with tree model - depend on levels tree / depth 
->>>>>>> dfc068d227cb9ebe2b3489c4cffc05b800e91293
 ```{r, results='markup', fig.dim=c(6,4)}
 loadPkg("rpart") # Classification trees, rpart(formula, data=, method=,control=) 
 set.seed(1)
@@ -371,7 +347,6 @@ mentaltreefit <- rpart(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowde
 # rpart.control(maxdepth = 30, minsplit = 20, minbucket = round(minsplit/3), cp = 0.01, maxcompete = 4, maxsurrogate = 5, usesurrogate = 2, xval = 10, surrogatestyle = 0, ...)
 printcp(mentaltreefit) # display the results 
 # plotcp(mentaltreefit) # visualize cross-validation results 
-
 summary(mentaltreefit) # detailed summary of splits
 # plot tree 
 plot(mentaltreefit, uniform=TRUE, main="Regression Tree")
