@@ -85,6 +85,7 @@ clean$Totcaspopn<-clean$Totalcases/clean$Population
 ```
 
 
+<<<<<<< HEAD
 # Summary 
 # Try with tree model - depend on levels tree / depth 
 # Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers
@@ -102,18 +103,24 @@ Below the descriptive statistics for the number of Mentally Unhealthy Days per c
 
 #Possibly better to show descriptive statistics of # of covid cases per county in 2020 
 
+=======
+## Descriptive Statistics
+
+>>>>>>> dfc068d227cb9ebe2b3489c4cffc05b800e91293
 ```{r eval=FALSE}
 library(ezids)
-xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 'Mental Health Provider Ratio')], title = "Counties Dataset Summary" )
-#xkablesummary( Counties_Dataset, title = "Counties Dataset Summary" )
+xkablesummary(clean, title = "Summary of COVID Data")
+str(clean)
 ```
+
 
 ####Creating a Correlation Matrix
 
+<<<<<<< HEAD
 
-
+=======
+>>>>>>> dfc068d227cb9ebe2b3489c4cffc05b800e91293
 ```{r, results='markup'}
-#install.packages("Hmisc")
 library(Hmisc)
 corClean<-cor(as.matrix(clean))
 ```
@@ -124,7 +131,7 @@ corClean<-cor(as.matrix(clean))
 xkabledply(corClean)
 ```
 
-
+####Correlation Plot
 ```{r, results='markup'}
 #install.packages("corrplot")
 library(corrplot)
@@ -132,9 +139,7 @@ corrplot(corClean)
 ```
 
 
-
 ##Testing for normality
-
 ```{r, results='markup'}
 #install.packages("ggpubr")
 library("ggpubr")
@@ -147,21 +152,12 @@ ggdensity(clean$Population, main = "Density plot of Population",
 
 ```
 
-```{r, results='markup'}
-#qqplot(count_df_clean$`Housing..Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
-# cor(count_df_clean$Total_cases, count_df_clean$`Housing..Overcrowding`)
-# reg_data <- data.frame(x = count_df_clean$`Housing..Overcrowding`,
-#                    y = count_df_clean$Total_cases)
-```
-
 ###QQ Plot
-
 ```{r, results='markup'}
 qqplot(clean$Totcaspopn, clean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
 ```
 
 ####Sample Model
-
 ```{r, results='markup'}
 
 reg_data <- data.frame(x = clean$Population,
@@ -196,23 +192,16 @@ qqnorm(res,
 
 #add a straight diagonal line to the plot
 qqline(res, col="blue") 
-
 ```
+
 ### built model  
 **To built model with linear regression.** 
-
 ```{r, results='markup'}
 plot(reg_model)
 ```
 
-
-####Team please note the new variable names above as you create the new model.
-#### I have also cleaned out the old codes and only left the code we need for this assignment.
-
-### built model  
-**To built good fit model with linear regression.** 
+##To built good fit model with linear regression.** 
 ```{r,results=TRUE}
-
 library(MASS)
 model <- lm(Totcaspopn ~ Deaths + Population + Blacks + Natives + Asians + Hispanics + White + PoorHlth + Menunhlthdays + Smokers + Fluvax + RespDisease, clean)
 stepAIC(model,direction = 'backward')
@@ -339,7 +328,7 @@ summary(reg.best10)
 #Linear Model: 
 Totcaspopn 
 
-Feature selection: 
+#Feature selection: 
 ```{r}
 loadPkg("leaps")
 #This is essentially best fit 
@@ -353,7 +342,7 @@ plot(reg.best10, scale = "Cp", main = "Exhaustive: Cp")
 summary(reg.best10)
 ```
 
-
+####Linear Model
 ```{r}
 Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = clean)
 summary(Totcaspopn.lm)
@@ -361,14 +350,19 @@ summary(Totcaspopn.lm)
 
 There is negative correlation between mental health days and Totcaspopn. With every 1 increase in mental health days there is a -8.18e-05 decrease in total cases population (describe p-value significance). 
 
+#####Find the VIF
 ```{r}
 xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
+<<<<<<< HEAD
 # Try with tree model - depend on levels tree / depth 
 # Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers
 # for descriptive & summary statistics
 
+=======
+####Try with tree model - depend on levels tree / depth 
+>>>>>>> dfc068d227cb9ebe2b3489c4cffc05b800e91293
 ```{r, results='markup', fig.dim=c(6,4)}
 loadPkg("rpart") # Classification trees, rpart(formula, data=, method=,control=) 
 set.seed(1)
@@ -386,7 +380,6 @@ text(mentaltreefit, use.n=TRUE, all=TRUE, cex=.75)
 ```
 
 #fancyplot
-
 ```{r fancyplot}
 loadPkg("rpart.plot")
 rpart.plot(mentaltreefit)
@@ -394,8 +387,3 @@ loadPkg("rattle") # For fancyRpartPlot (Trees) Answer "no" on installing from bi
 fancyRpartPlot(mentaltreefit)
 ```
 ```
-
-# vif - check after linear model built check VIF values 
-Total cases / population = populationnew + independent variables 
-
-
