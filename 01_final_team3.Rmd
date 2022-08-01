@@ -1,0 +1,374 @@
+---
+title: "01_final"
+author: "Team3"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=FALSE}
+# some of common options (and the defaults) are: 
+# include=T, eval=T, echo=T, results='hide'/'asis'/'markup',..., collapse=F, warning=T, message=T, error=T, cache=T, fig.width=6, fig.height=4, fig.dim=c(6,4) #inches, fig.align='left'/'center','right', 
+library(ezids)
+# knitr::opts_chunk$set(warning = F, results = "markup", message = F)
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+# options(scipen=9, digits = 3) 
+# ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
+# use scipen=999 to prevent scientific notation at all times
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+# HW Assignment - Estimation 
+The variables in the dataset are:  
+Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
+
+### Import data
+
+```{r import,results='markup'}
+Counties_Dataset <- read.csv("/Users/williamyu/Documents/GitHub/6101-Group-Project/Counties Dataset.csv")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+### Data cleaning
+###Removing characters from data frame
+
+```{r, results='markup'}
+new_Coundf<-Counties_Dataset[, !sapply(Counties_Dataset, is.character)]
+```
+
+###Dropping some columns
+
+```{r, results='markup'}
+
+new_df <- new_Coundf[ , -c(1,2,6,7,19,22,23,24,26,27,29,30,31,32,33,34,41,45,46,48,49) ]
+
+new_df1<-new_df[, -c(16,20,21,22,23,27,28,31,32,33,34,35 )]
+
+new_clean<-new_df1[, -c(10,11,12)]
+
+```
+
+
+#### Changing Column names
+
+```{r, results='markup'}
+colnames(new_clean)<- c("Totalcases","Deaths","Population", "Blacks","Natives","Asians","Hispanics","White","PDSqmile","HDSqmile","ColEduc","Socialize","HseCrowded","Diabetic","PoorHlth","Menunhlthdays","Smokers","Fluvax","RespDisease")
+
+
+```
+
+#####Removing NAs from the data frame
+
+```{r, results='markup'}
+clean<- na.omit(new_clean) 
+```
+
+####Creating a new Y variable
+
+```{r, results='markup'}
+clean$Totcaspopn<-clean$Totalcases/clean$Population
+```
+
+####Creating a Correlation Matrix
+
+
+
+```{r, results='markup'}
+#install.packages("Hmisc")
+library(Hmisc)
+corClean<-cor(as.matrix(clean))
+```
+
+####Correlation Matrix
+
+```{r, results='markup'}
+xkabledply(corClean)
+```
+
+
+```{r, results='markup'}
+#install.packages("corrplot")
+library(corrplot)
+corrplot(corClean)
+```
+
+
+
+##Testing for normality
+
+```{r, results='markup'}
+#install.packages("ggpubr")
+library("ggpubr")
+ggdensity(clean$Totcaspopn, 
+          main = "Density plot of Total cases per Population",
+          xlab = "Total cases")
+
+ggdensity(clean$Population, main = "Density plot of Population",
+          xlab = "Total cases")
+
+```
+<<<<<<< HEAD
+```{r, results='markup'}
+#qqplot(count_df_clean$`Housing..Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
+
+cor(count_df_clean$Total_cases, count_df_clean$`Housing..Overcrowding`)
+reg_data <- data.frame(x = count_df_clean$`Housing..Overcrowding`,
+                   y = count_df_clean$Total_cases)
+
+###QQ Plot
+
+```{r, results='markup'}
+qqplot(clean$Totcaspopn, clean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
+```
+
+####Sample Model
+
+```{r, results='markup'}
+
+reg_data <- data.frame(x = clean$Population,
+                   y = clean$Totcaspopn)
+
+reg_model <- lm(reg_data$y ~ reg_data$x, reg_data)
+
+print(reg_model)
+
+sumstats<-summary(reg_model)
+
+summary(reg_model)
+
+coef(reg_model)
+
+#get list of residuals 
+res <- resid(reg_model)
+
+#produce residual vs. fitted plot
+plot(fitted(reg_model), res)
+plot(fitted(reg_model), res,
+     xlab="Fitted Model", 
+     ylab="Residuals", 
+     main="Residual-Fitted Plot")
+
+
+#create Q-Q plot for residuals
+qqnorm(res,
+     xlab="Normal Values", 
+     ylab="Residuals", 
+     main="Normal Quantile Plot for Residuals")
+
+#add a straight diagonal line to the plot
+qqline(res, col="blue") 
+
+```
+### built model  
+**To built model with linear regression.** 
+```{r,results=TRUE}
+#<<<<<<< julia_montiel
+#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+model <- lm(Total_cases ~ `Housing..Overcrowding`,count_df_clean)
+#model
+```
+
+```{r, results='markup'}
+plot(reg_model)
+```
+
+
+####Team please note the new variable names above as you create the new model.
+#### I have also cleaned out the old codes and only left the code we need for this assignment.
+
+### built model  
+**To built good fit model with linear regression.** 
+```{r,results=TRUE}
+
+library(MASS)
+model <- lm(Totcaspopn ~ Deaths + Population + Blacks + Natives + Asians + Hispanics + White + PoorHlth + Menunhlthdays + Smokers + Fluvax + RespDisease, clean)
+stepAIC(model,direction = 'backward')
+print('lm(formula = Totcaspopn ~ Deaths + Population + Blacks + Asians + 
+    PoorHlth + Menunhlthdays + Smokers, clean) is good fit model')
+model1 <- lm(Totcaspopn ~ Deaths + Population + Blacks + Asians + 
+    PoorHlth + Menunhlthdays + Smokers, clean)
+summary(model1)
+model1$coefficients
+xkabledply(confint(model1))
+xkablevif(model1)
+plot(model1)
+
+#<<<<<<< julia_montiel
+#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
+#model <- lm(Total_cases ~ Housing..Overcrowding,count_df_clean)
+#model
+
+```
+
+
+### built model with single variable
+```{r, results=TRUE}
+print('model2')
+model2 <- lm(Totcaspopn ~ Population + Menunhlthdays, clean)
+summary(model2)
+model2$coefficients
+xkabledply(confint(model2),title = 'model2')
+xkablevif(model2,title = 'model2')
+plot(model2,main = 'madel2')
+print('model3')
+model3 <- lm(Totcaspopn ~ Population + Smokers, clean)
+summary(model3)
+model3$coefficients
+xkabledply(confint(model3),title = 'model3')
+xkablevif(model3,title = 'model3')
+plot(model3,main = 'madel3')
+print('model4')
+model4 <- lm(Totcaspopn ~ Population + PoorHlth, clean)
+summary(model4)
+model4$coefficients
+xkabledply(confint(model4),title = 'model4')
+xkablevif(model4,title = 'model4')
+plot(model4, main = 'madel4')
+```
+
+
+
+### compare three single model
+```{r, results=TRUE}
+anovares <- anova(model2,model3,model4)
+anovares
+str(anovares)
+xkabledply(anovares, title = "ANOVA comparison between the models")
+```
+
+
+### graph
+```{r,results=TRUE}
+library(ggplot2)
+ggplot(clean, aes(Smokers, Totcaspopn)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE)  +
+  coord_cartesian(ylim = c(0, 0.25))
+ggplot(clean, aes(Smokers, Totcaspopn)) +
+  geom_point() +
+  geom_smooth(method = 'glm', se = T, method.args = list(family = 'binomial')) + coord_cartesian(ylim = c(0, 0.25))
+
+```
+
+
+### check for cor.test
+```{r, results=TRUE}
+cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="pearson")
+cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="spearman")
+```
+
+
+### t test
+```{r,results=TRUE}
+t_test.ts80 = t.test(x=clean$Totcaspopn, conf.level=0.80)
+t_test.ts80
+t_test.ts80$conf.int
+t_test.ts80$alternative
+t_test.ts80$estimate
+t_test.ts99 = t.test(x=clean$Totcaspopn, conf.level=0.99)
+t_test.ts99
+t_test.ts99$conf.int
+t_test.ts99$alternative
+t_test.ts99$estimate
+```
+
+
+### glm model
+```{r,results=TRUE}
+library(pROC)
+library(pscl)
+model5 <- glm(Totcaspopn ~ Fluvax + Smokers, data = clean, family = "binomial")
+summary(model5)
+xkabledply(model5, title = paste("Logistic Regression :", format(formula(model5)) ))
+expcoeff = exp(coef(model5))
+xkabledply( as.table(expcoeff), title = "Exponential of coefficients in Logit Reg" , wide=T)
+xkabledply( confint(model5), title = 'confidence interval of model' )
+prob=predict(model5, type = 'response' )
+clean$prob=prob
+roc1 <- roc(Totcaspopn~prob, data=clean)
+auc(roc1) # area-under-curve prefer 0.8 or higher.
+plot(roc1)
+pR2(model5)
+```
+
+#Linear Model: 
+Totcaspopn 
+
+Feature selection: 
+```{r}
+loadPkg("leaps")
+#This is essentially best fit 
+reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population, data = clean, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
+#The plot will show the Adjust R^2 when using the variables across the bottom
+plot(reg.best10, scale = "adjr2", main = "Exhaustive: Adjusted R^2")
+plot(reg.best10, scale = "r2", main = "Exhaustive: R^2")
+# In the "leaps" package, we can use scale=c("bic","Cp","adjr2","r2")
+plot(reg.best10, scale = "bic", main = "Exhaustive: BIC")
+plot(reg.best10, scale = "Cp", main = "Exhaustive: Cp")
+summary(reg.best10)
+```
+
+```{r}
+Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = clean)
+summary(Totcaspopn.lm)
+```
+
+There is negative correlation between mental health days and Totcaspopn. With every 1 increase in mental health days there is a -8.18e-05 decrease in total cases population (describe p-value significance). 
+
+```{r}
+xkablevif(Totcaspopn.lm)
+```
+
+# Try with tree model - depend on levels tree / depth 
+```{r,results=TRUE}
+#install.packages('randomForest')
+#library(randomForest)
+library(rpart)
+set.seed(1)
+fit <- rpart(Totcaspopn ~ Deaths + Population + Blacks + Asians + PoorHlth + Menunhlthdays + Smokers, clean, method="class", control = list(maxdepth = 5) )
+
+printcp(fit)
+plotcp(fit)
+summary(fit)
+#plot tree
+#plot(fit, uniform=TRUE, main="Classification Tree for Churn")
+#text(fit, use.n=TRUE, all=TRUE, cex=.8)
+
+#please modify this and after monday meet with professor to built the tree 
+```
+vif - check after linear model built check VIF values 
+Total cases / population = populationnew + independent variables 
+
+# Summary 
+
+Keep code here Summary and Descriptive Statistics to use later. 
+
+```{r eval=FALSE}
+summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
+str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
+```
+
+## Descriptive Statistics
+
+Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
+#Show ratio of health care providers? Shows outliers in data. 
+#Possibly better to show descriptive statistics of # of covid cases per county in 2020 
+
+```{r eval=FALSE}
+library(ezids)
+xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 'Mental Health Provider Ratio')], title = "Counties Dataset Summary" )
+#xkablesummary( Counties_Dataset, title = "Counties Dataset Summary" )
+```
