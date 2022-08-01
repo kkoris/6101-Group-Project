@@ -85,34 +85,18 @@ clean$Totcaspopn<-clean$Totalcases/clean$Population
 ```
 
 
-# Summary 
-
-Keep code here Summary and Descriptive Statistics to use later. 
-
-```{r eval=FALSE}
-summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
-str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
-```
-
 ## Descriptive Statistics
-
-Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
-
-#Show ratio of health care providers? Shows outliers in data. 
-#Possibly better to show descriptive statistics of # of covid cases per county in 2020 
 
 ```{r eval=FALSE}
 library(ezids)
-xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 'Mental Health Provider Ratio')], title = "Counties Dataset Summary" )
-#xkablesummary( Counties_Dataset, title = "Counties Dataset Summary" )
+xkablesummary(clean, title = "Summary of COVID Data")
+str(clean)
 ```
+
 
 ####Creating a Correlation Matrix
 
-
-
 ```{r, results='markup'}
-#install.packages("Hmisc")
 library(Hmisc)
 corClean<-cor(as.matrix(clean))
 ```
@@ -131,7 +115,6 @@ corrplot(corClean)
 ```
 
 
-
 ##Testing for normality
 
 ```{r, results='markup'}
@@ -144,13 +127,6 @@ ggdensity(clean$Totcaspopn,
 ggdensity(clean$Population, main = "Density plot of Population",
           xlab = "Total cases")
 
-```
-
-```{r, results='markup'}
-#qqplot(count_df_clean$`Housing..Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
-# cor(count_df_clean$Total_cases, count_df_clean$`Housing..Overcrowding`)
-# reg_data <- data.frame(x = count_df_clean$`Housing..Overcrowding`,
-#                    y = count_df_clean$Total_cases)
 ```
 
 ###QQ Plot
@@ -204,12 +180,7 @@ qqline(res, col="blue")
 plot(reg_model)
 ```
 
-
-####Team please note the new variable names above as you create the new model.
-#### I have also cleaned out the old codes and only left the code we need for this assignment.
-
-### built model  
-**To built good fit model with linear regression.** 
+##To built good fit model with linear regression.** 
 ```{r,results=TRUE}
 
 library(MASS)
