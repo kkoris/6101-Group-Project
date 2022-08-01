@@ -84,10 +84,17 @@ clean<- na.omit(new_clean)
 clean$Totcaspopn<-clean$Totalcases/clean$Population
 ```
 
+```{r eval=FALSE}
+summary(clean$`Average Number of Mentally Unhealthy Days`)
+str(clean$`Average Number of Mentally Unhealthy Days`)
+```
 
 ## Descriptive Statistics
 
 ## Make sure to include these in the descriptive stats Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
+
+=======
+## Descriptive Statistics
 
 ```{r eval=FALSE}
 library(ezids)
@@ -96,6 +103,7 @@ xkablesummary(clean, title = "Summary of COVID Data")
 
 ####Creating a Correlation Matrix
 ##include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
+=======
 
 ```{r, results='markup'}
 library(Hmisc)
