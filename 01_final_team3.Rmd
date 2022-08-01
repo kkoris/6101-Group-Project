@@ -84,6 +84,29 @@ clean<- na.omit(new_clean)
 clean$Totcaspopn<-clean$Totalcases/clean$Population
 ```
 
+
+# Summary 
+
+Keep code here Summary and Descriptive Statistics to use later. 
+
+```{r eval=FALSE}
+summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
+str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
+```
+
+## Descriptive Statistics
+
+Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
+
+#Show ratio of health care providers? Shows outliers in data. 
+#Possibly better to show descriptive statistics of # of covid cases per county in 2020 
+
+```{r eval=FALSE}
+library(ezids)
+xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 'Mental Health Provider Ratio')], title = "Counties Dataset Summary" )
+#xkablesummary( Counties_Dataset, title = "Counties Dataset Summary" )
+```
+
 ####Creating a Correlation Matrix
 
 
@@ -125,10 +148,10 @@ ggdensity(clean$Population, main = "Density plot of Population",
 
 ```{r, results='markup'}
 #qqplot(count_df_clean$`Housing..Overcrowding`, count_df_clean$Total_cases, main = "QQ Plot of Total cases", xlab = "Average Number of Mentally Unhealth Days")
-
-cor(count_df_clean$Total_cases, count_df_clean$`Housing..Overcrowding`)
-reg_data <- data.frame(x = count_df_clean$`Housing..Overcrowding`,
-                   y = count_df_clean$Total_cases)
+# cor(count_df_clean$Total_cases, count_df_clean$`Housing..Overcrowding`)
+# reg_data <- data.frame(x = count_df_clean$`Housing..Overcrowding`,
+#                    y = count_df_clean$Total_cases)
+```
 
 ###QQ Plot
 
@@ -176,12 +199,6 @@ qqline(res, col="blue")
 ```
 ### built model  
 **To built model with linear regression.** 
-```{r,results=TRUE}
-#<<<<<<< julia_montiel
-#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-model <- lm(Total_cases ~ `Housing..Overcrowding`,count_df_clean)
-#model
-```
 
 ```{r, results='markup'}
 plot(reg_model)
@@ -205,13 +222,8 @@ model1 <- lm(Totcaspopn ~ Deaths + Population + Blacks + Asians +
 summary(model1)
 model1$coefficients
 xkabledply(confint(model1))
-xkablevif(model1)
+xkablevif(model1, title = "vif")
 plot(model1)
-
-#<<<<<<< julia_montiel
-#model <- lm(Total_cases ~ Mental_Health_Provider_Ratio,Counties_Dataset)
-#model <- lm(Total_cases ~ Housing..Overcrowding,count_df_clean)
-#model
 
 ```
 
@@ -308,7 +320,6 @@ pR2(model5)
 
 #Linear Model: 
 Totcaspopn 
-
 Feature selection: 
 ```{r}
 loadPkg("leaps")
@@ -350,36 +361,38 @@ summary(Totcaspopn.lm)
 There is negative correlation between mental health days and Totcaspopn. With every 1 increase in mental health days there is a -8.18e-05 decrease in total cases population (describe p-value significance). 
 
 ```{r}
-xkablevif(Totcaspopn.lm)
+xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
 # Try with tree model - depend on levels tree / depth 
 
+```{r, results='markup', fig.dim=c(6,4)}
+loadPkg("rpart") # Classification trees, rpart(formula, data=, method=,control=) 
+set.seed(1)
+mentaltreefit <- rpart(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data=clean, control = list(maxdepth = 25) )
+# mentaltreefit <- rpart(Kyphosis ~ Age + Number + Start, data=kyphosis, method="class", control = {rpart.control list} )
+# rpart.control(maxdepth = 30, minsplit = 20, minbucket = round(minsplit/3), cp = 0.01, maxcompete = 4, maxsurrogate = 5, usesurrogate = 2, xval = 10, surrogatestyle = 0, ...)
+printcp(mentaltreefit) # display the results 
+# plotcp(mentaltreefit) # visualize cross-validation results 
 
-#please modify this and after monday meet with professor to built the tree 
+summary(mentaltreefit) # detailed summary of splits
+# plot tree 
+plot(mentaltreefit, uniform=TRUE, main="Regression Tree")
+text(mentaltreefit, use.n=TRUE, all=TRUE, cex=.75)
+
 ```
 
-vif - check after linear model built check VIF values 
+#fancyplot
+
+```{r fancyplot}
+loadPkg("rpart.plot")
+rpart.plot(mentaltreefit)
+loadPkg("rattle") # For fancyRpartPlot (Trees) Answer "no" on installing from binary source
+fancyRpartPlot(mentaltreefit)
+```
+```
+
+# vif - check after linear model built check VIF values 
 Total cases / population = populationnew + independent variables 
 
-# Summary 
 
-Keep code here Summary and Descriptive Statistics to use later. 
-
-```{r eval=FALSE}
-summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
-str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
-```
-
-## Descriptive Statistics
-
-Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
-
-#Show ratio of health care providers? Shows outliers in data. 
-#Possibly better to show descriptive statistics of # of covid cases per county in 2020 
-
-```{r eval=FALSE}
-library(ezids)
-xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 'Mental Health Provider Ratio')], title = "Counties Dataset Summary" )
-#xkablesummary( Counties_Dataset, title = "Counties Dataset Summary" )
-```
