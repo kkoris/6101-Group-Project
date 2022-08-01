@@ -355,19 +355,6 @@ xkablevif(Totcaspopn.lm)
 
 # Try with tree model - depend on levels tree / depth 
 
-```{r,results=TRUE}
-#install.packages('randomForest')
-#library(randomForest)
-library(rpart)
-set.seed(1)
-fit <- rpart(Totcaspopn ~ Deaths + Population + Blacks + Asians + PoorHlth + Menunhlthdays + Smokers, clean, method="class", control = list(maxdepth = 5) )
-
-printcp(fit)
-plotcp(fit)
-summary(fit)
-#plot tree
-#plot(fit, uniform=TRUE, main="Classification Tree for Churn")
-#text(fit, use.n=TRUE, all=TRUE, cex=.8)
 
 #please modify this and after monday meet with professor to built the tree 
 ```
@@ -387,6 +374,7 @@ str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
 ## Descriptive Statistics
 
 Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
+
 #Show ratio of health care providers? Shows outliers in data. 
 #Possibly better to show descriptive statistics of # of covid cases per county in 2020 
 
