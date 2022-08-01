@@ -93,7 +93,6 @@ str(clean$`Average Number of Mentally Unhealthy Days`)
 
 ## Make sure to include these in the descriptive stats Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
 
-=======
 ## Descriptive Statistics
 
 ```{r eval=FALSE}
