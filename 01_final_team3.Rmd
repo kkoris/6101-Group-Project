@@ -87,14 +87,15 @@ clean$Totcaspopn<-clean$Totalcases/clean$Population
 
 ## Descriptive Statistics
 
+## Make sure to include these in the descriptive stats Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
+
 ```{r eval=FALSE}
 library(ezids)
 xkablesummary(clean, title = "Summary of COVID Data")
-str(clean)
 ```
 
-
 ####Creating a Correlation Matrix
+##include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
 
 ```{r, results='markup'}
 library(Hmisc)
@@ -220,7 +221,6 @@ plot(model4, main = 'madel4')
 ```
 
 
-
 ### compare three single model
 ```{r, results=TRUE}
 anovares <- anova(model2,model3,model4)
@@ -228,7 +228,6 @@ anovares
 str(anovares)
 xkabledply(anovares, title = "ANOVA comparison between the models")
 ```
-
 
 ### graph
 ```{r,results=TRUE}
@@ -340,7 +339,6 @@ mentaltreefit <- rpart(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowde
 # rpart.control(maxdepth = 30, minsplit = 20, minbucket = round(minsplit/3), cp = 0.01, maxcompete = 4, maxsurrogate = 5, usesurrogate = 2, xval = 10, surrogatestyle = 0, ...)
 printcp(mentaltreefit) # display the results 
 # plotcp(mentaltreefit) # visualize cross-validation results 
-
 summary(mentaltreefit) # detailed summary of splits
 # plot tree 
 plot(mentaltreefit, uniform=TRUE, main="Regression Tree")
