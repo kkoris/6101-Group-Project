@@ -86,8 +86,10 @@ clean$Totcaspopn<-clean$Totalcases/clean$Population
 
 
 # Summary 
-
-Keep code here Summary and Descriptive Statistics to use later. 
+# Try with tree model - depend on levels tree / depth 
+# Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers
+# for descriptive & summary statistics
+# Keep code here Summary and Descriptive Statistics to use later. 
 
 ```{r eval=FALSE}
 summary(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
@@ -98,7 +100,6 @@ str(Counties_Dataset$`Average Number of Mentally Unhealthy Days`)
 
 Below the descriptive statistics for the number of Mentally Unhealthy Days per county show that on average there are a minimum of 2.5 mentally unhealthy days per county and a maximum of 6.314 mentally unhealthy days per county in 2020. 
 
-#Show ratio of health care providers? Shows outliers in data. 
 #Possibly better to show descriptive statistics of # of covid cases per county in 2020 
 
 ```{r eval=FALSE}
@@ -108,7 +109,6 @@ xkablesummary( Counties_Dataset[c('Average Number of Mentally Unhealthy Days' , 
 ```
 
 ####Creating a Correlation Matrix
-
 
 
 ```{r, results='markup'}
@@ -365,6 +365,8 @@ xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
 # Try with tree model - depend on levels tree / depth 
+# Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers
+# for descriptive & summary statistics
 
 ```{r, results='markup', fig.dim=c(6,4)}
 loadPkg("rpart") # Classification trees, rpart(formula, data=, method=,control=) 
