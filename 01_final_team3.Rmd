@@ -30,11 +30,22 @@ options(scientific=T, digits = 3)
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-# HW Assignment - Estimation 
+# Team Project - COVID Data
 The variables in the dataset are:  
 Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
 ###Research Question - Does mentally unhealthy days, race(Black), education, housing and smoking status indicative of total COVID cases in population?
+
+Variable |  Definition  
+  :-:    |  :-- 
+TotalCases | Total Cases of COVID-19 infections
+Population | percentage of people living in that county (for demographic %)
+Blacks| percentage of Black people who have contracted COVID-19
+College Education | number of people who have a College Education in the region
+HseCrowded | Housing Overcrowding (multiple people in the house)
+Menunhlthdays | average number of mentally unhealthy days
+Smokers | percentage of Smokers
+Totcaspopn | Total population over proportion *(need to fact check this)
 
 ### Import data
 
@@ -82,38 +93,35 @@ clean<- na.omit(new_clean)
 
 ```{r, results='markup'}
 clean$Totcaspopn<-clean$Totalcases/clean$Population
+print(clean)
 ```
 
-```{r eval=FALSE}
-summary(clean)
-str(clean)
+####Create subset of data that only include variables we are testing for- (mentally unhealthy days, race(Black), education, housing and smoking status)
+
+```{r}
+finalclean<-clean[, -c(2, 5, 6, 7, 8, 9, 10, 12, 14, 15, 18, 19, 20)]
 ```
 
-## Descriptive Statistics
-
-## Make sure to include these in the descriptive stats Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
+###These are the remaining variables in the new data frame: Totcaspopn+ Menunhlthdays + Blacks + ColEduc + Smokers + hsecrowded +total cases + population. 
 
 ## Descriptive Statistics
 
 ```{r eval=FALSE}
 library(ezids)
-xkablesummary(clean, title = "Summary of COVID Data")
+xkablesummary(finalclean, title = "Summary of Data")
 ```
 
 ####Creating a Correlation Matrix
-##include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
-=======
 
 ```{r, results='markup'}
-install.packages(Hmisc)
-library(Hmisc)
-corClean<-cor(as.matrix(clean))
+corClean<-cor(as.matrix(finalclean))
 ```
 
 ####Correlation Matrix
 
 ```{r, results='markup'}
-xkabledply(corClean)
+install.packages("kableExtra")
+xkabledply("corClean")
 ```
 
 ####Correlation Plot
@@ -128,25 +136,25 @@ corrplot(corClean)
 ```{r, results='markup'}
 #install.packages("ggpubr")
 library("ggpubr")
-ggdensity(clean$Totcaspopn, 
+ggdensity(finalclean$Totcaspopn, 
           main = "Density plot of Total cases per Population",
           xlab = "Total cases")
 
-ggdensity(clean$Population, main = "Density plot of Population",
+ggdensity(finalclean$Population, main = "Density plot of Population",
           xlab = "Total cases")
 
 ```
 
 ###QQ Plot
 ```{r, results='markup'}
-qqplot(clean$Totcaspopn, clean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
+qqplot(finalclean$Totcaspopn, finalclean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
 ```
 
 ####Sample Model
 ```{r, results='markup'}
 
-reg_data <- data.frame(x = clean$Population,
-                   y = clean$Totcaspopn)
+reg_data <- data.frame(x = finalclean$Population,
+                   y = finalclean$Totcaspopn)
 
 reg_model <- lm(reg_data$y ~ reg_data$x, reg_data)
 
@@ -188,12 +196,11 @@ plot(reg_model)
 ##To built good fit model with linear regression.** 
 ```{r,results=TRUE}
 library(MASS)
-model <- lm(Totcaspopn ~ Deaths + Population + Blacks + Natives + Asians + Hispanics + White + PoorHlth + Menunhlthdays + Smokers + Fluvax + RespDisease, clean)
+model <- lm(Totcaspopn ~ Population + Blacks +  Menunhlthdays + Smokers, clean)
 stepAIC(model,direction = 'backward')
-print('lm(formula = Totcaspopn ~ Deaths + Population + Blacks + Asians + 
-    PoorHlth + Menunhlthdays + Smokers, clean) is good fit model')
-model1 <- lm(Totcaspopn ~ Deaths + Population + Blacks + Asians + 
-    PoorHlth + Menunhlthdays + Smokers, clean)
+print('lm(formula = Totcaspopn ~ Population + Blacks +
+     Menunhlthdays + Smokers, clean) is good fit model')
+model1 <- lm(Totcaspopn ~ Population + Blacks + Menunhlthdays + Smokers, clean)
 summary(model1)
 model1$coefficients
 xkabledply(confint(model1))
@@ -220,7 +227,7 @@ xkabledply(confint(model3),title = 'model3')
 xkablevif(model3,title = 'model3')
 plot(model3,main = 'madel3')
 print('model4')
-model4 <- lm(Totcaspopn ~ Population + PoorHlth, clean)
+model4 <- lm(Totcaspopn ~ Population + Blacks, clean)
 summary(model4)
 model4$coefficients
 xkabledply(confint(model4),title = 'model4')
