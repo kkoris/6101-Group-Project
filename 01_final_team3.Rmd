@@ -30,11 +30,22 @@ options(scientific=T, digits = 3)
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-# HW Assignment - Estimation 
+# Team Project - COVID Data
 The variables in the dataset are:  
 Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
 ###Research Question - Does mentally unhealthy days, race(Black), education, housing and smoking status indicative of total COVID cases in population?
+
+Variable |  Definition  
+  :-:    |  :-- 
+TotalCases | Total Cases of COVID-19 infections
+Population | percentage of people living in that county (for demographic %)
+Blacks| percentage of Black people who have contracted COVID-19
+College Education | number of people who have a College Education in the region
+HseCrowded | Housing Overcrowding (multiple people in the house)
+Menunhlthdays | average number of mentally unhealthy days
+Smokers | percentage of Smokers
+Totcaspopn | Total population over proportion *(need to fact check this)
 
 ### Import data
 
@@ -82,22 +93,22 @@ clean<- na.omit(new_clean)
 
 ```{r, results='markup'}
 clean$Totcaspopn<-clean$Totalcases/clean$Population
+print(clean)
 ```
 
-```{r eval=FALSE}
-summary(clean)
-str(clean)
+####Create subset of data that only include variables we are testing for- (mentally unhealthy days, race(Black), education, housing and smoking status)
+
+```{r}
+finalclean<-clean[, -c(2, 5, 6, 7, 8, 9, 10, 12, 14, 15, 18, 19, 20)]
 ```
 
-## Descriptive Statistics
-
-## Make sure to include these in the descriptive stats Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
+###These are the remaining variables in the new data frame: Totcaspopn+ Menunhlthdays + Blacks + ColEduc + Smokers + hsecrowded +total cases + population. 
 
 ## Descriptive Statistics
 
 ```{r eval=FALSE}
 library(ezids)
-xkablesummary(clean, title = "Summary of COVID Data")
+xkablesummary(finalclean, title = "Summary of Data")
 ```
 
 ####Creating a Correlation Matrix
@@ -106,15 +117,14 @@ xkablesummary(clean, title = "Summary of COVID Data")
 
 
 ```{r, results='markup'}
-install.packages(Hmisc)
-library(Hmisc)
-corClean<-cor(as.matrix(clean))
+corClean<-cor(as.matrix(finalclean))
 ```
 
 ####Correlation Matrix
 
 ```{r, results='markup'}
-xkabledply(corClean)
+library("kableExtra")
+xkabledply("corClean")
 ```
 
 ####Correlation Plot
@@ -124,30 +134,29 @@ library(corrplot)
 corrplot(corClean)
 ```
 
-
 ##Testing for normality
 ```{r, results='markup'}
 #install.packages("ggpubr")
 library("ggpubr")
-ggdensity(clean$Totcaspopn, 
+ggdensity(finalclean$Totcaspopn, 
           main = "Density plot of Total cases per Population",
           xlab = "Total cases")
 
-ggdensity(clean$Population, main = "Density plot of Population",
+ggdensity(finalclean$Population, main = "Density plot of Population",
           xlab = "Total cases")
 
 ```
 
 ###QQ Plot
 ```{r, results='markup'}
-qqplot(clean$Totcaspopn, clean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
+qqplot(finalclean$Totcaspopn, finalclean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
 ```
 
 ####Sample Model
 ```{r, results='markup'}
 
-reg_data <- data.frame(x = clean$Population,
-                   y = clean$Totcaspopn)
+reg_data <- data.frame(x = finalclean$Population,
+                   y = finalclean$Totcaspopn)
 
 reg_model <- lm(reg_data$y ~ reg_data$x, reg_data)
 
@@ -189,12 +198,11 @@ plot(reg_model)
 ##To built good fit model with linear regression.** 
 ```{r,results=TRUE}
 library(MASS)
-model <- lm(Totcaspopn ~ Deaths + Population + Blacks + Natives + Asians + Hispanics + White + PoorHlth + Menunhlthdays + Smokers + Fluvax + RespDisease, clean)
+model <- lm(Totcaspopn ~ Population + Blacks +  Menunhlthdays + Smokers, finalclean)
 stepAIC(model,direction = 'backward')
-print('lm(formula = Totcaspopn ~ Deaths + Population + Blacks + Asians + 
-    PoorHlth + Menunhlthdays + Smokers, clean) is good fit model')
-model1 <- lm(Totcaspopn ~ Deaths + Population + Blacks + Asians + 
-    PoorHlth + Menunhlthdays + Smokers, clean)
+print('lm(formula = Totcaspopn ~ Population + Blacks +
+     Menunhlthdays + Smokers, clean) is good fit model')
+model1 <- lm(Totcaspopn ~ Population + Blacks + Menunhlthdays + Smokers, finalclean)
 summary(model1)
 model1$coefficients
 xkabledply(confint(model1))
@@ -208,21 +216,21 @@ plot(model1)
 # already used with feature selection 
 ```{r, results=TRUE}
 print('model2')
-model2 <- lm(Totcaspopn ~ Population + Menunhlthdays, clean)
+model2 <- lm(Totcaspopn ~ Population + Menunhlthdays, finalclean)
 summary(model2)
 model2$coefficients
 xkabledply(confint(model2),title = 'model2')
 xkablevif(model2,title = 'model2')
 plot(model2,main = 'madel2')
 print('model3')
-model3 <- lm(Totcaspopn ~ Population + Smokers, clean)
+model3 <- lm(Totcaspopn ~ Population + Smokers, finalclean)
 summary(model3)
 model3$coefficients
 xkabledply(confint(model3),title = 'model3')
 xkablevif(model3,title = 'model3')
 plot(model3,main = 'madel3')
 print('model4')
-model4 <- lm(Totcaspopn ~ Population + PoorHlth, clean)
+model4 <- lm(Totcaspopn ~ Population + Blacks, finalclean)
 summary(model4)
 model4$coefficients
 xkabledply(confint(model4),title = 'model4')
@@ -243,11 +251,11 @@ xkabledply(anovares, title = "ANOVA comparison between the models")
 ### graph
 ```{r,results=TRUE}
 library(ggplot2)
-ggplot(clean, aes(Smokers, Totcaspopn)) +
+ggplot(finalclean, aes(Smokers, Totcaspopn)) +
   geom_point() +
   geom_smooth(method = 'lm', se = FALSE)  +
   coord_cartesian(ylim = c(0, 0.25))
-ggplot(clean, aes(Smokers, Totcaspopn)) +
+ggplot(finalclean, aes(Smokers, Totcaspopn)) +
   geom_point() +
   geom_smooth(method = 'glm', se = T, method.args = list(family = 'binomial')) + coord_cartesian(ylim = c(0, 0.25))
 
@@ -255,18 +263,18 @@ ggplot(clean, aes(Smokers, Totcaspopn)) +
 
 ### check for cor.test
 ```{r, results=TRUE}
-cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="pearson")
-cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="spearman")
+cor.test(finalclean$Totcaspopn,as.numeric(clean$Population), method="pearson")
+cor.test(finalclean$Totcaspopn,as.numeric(clean$Population), method="spearman")
 ```
 
 ### t test
 ```{r,results=TRUE}
-t_test.ts80 = t.test(x=clean$Totcaspopn, conf.level=0.80)
+t_test.ts80 = t.test(x=finalclean$Totcaspopn, conf.level=0.80)
 t_test.ts80
 t_test.ts80$conf.int
 t_test.ts80$alternative
 t_test.ts80$estimate
-t_test.ts99 = t.test(x=clean$Totcaspopn, conf.level=0.99)
+t_test.ts99 = t.test(x=finalclean$Totcaspopn, conf.level=0.99)
 t_test.ts99
 t_test.ts99$conf.int
 t_test.ts99$alternative
@@ -278,15 +286,15 @@ t_test.ts99$estimate
 ```{r,results=TRUE}
 library(pROC)
 library(pscl)
-model5 <- glm(Totcaspopn ~ Fluvax + Smokers, data = clean, family = "binomial")
+model5 <- glm(Totcaspopn ~ Smokers + Blacks, data = finalclean, family = "binomial")
 summary(model5)
 xkabledply(model5, title = paste("Logistic Regression :", format(formula(model5)) ))
 expcoeff = exp(coef(model5))
 xkabledply( as.table(expcoeff), title = "Exponential of coefficients in Logit Reg" , wide=T)
 xkabledply( confint(model5), title = 'confidence interval of model' )
 prob=predict(model5, type = 'response' )
-clean$prob=prob
-roc1 <- roc(Totcaspopn~prob, data=clean)
+finalclean$prob=prob
+roc1 <- roc(Totcaspopn~prob, data=finalclean)
 auc(roc1) # area-under-curve prefer 0.8 or higher.
 plot(roc1)
 pR2(model5)
@@ -298,7 +306,7 @@ Feature selection:
 ```{r}
 loadPkg("leaps")
 #This is essentially best fit 
-reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population, data = clean, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
+reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers + Population, data = finalclean, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
 #The plot will show the Adjust R^2 when using the variables across the bottom
 plot(reg.best10, scale = "adjr2", main = "Exhaustive: Adjusted R^2")
 plot(reg.best10, scale = "r2", main = "Exhaustive: R^2")
@@ -316,7 +324,7 @@ Totcaspopn
 ```{r}
 loadPkg("leaps")
 #This is essentially best fit 
-reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population, data = clean, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
+reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers + Population, data = finalclean, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
 #The plot will show the Adjust R^2 when using the variables across the bottom
 plot(reg.best10, scale = "adjr2", main = "Exhaustive: Adjusted R^2")
 plot(reg.best10, scale = "r2", main = "Exhaustive: R^2")
@@ -328,7 +336,7 @@ summary(reg.best10)
 
 ####Linear Model
 ```{r}
-Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = clean)
+Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = finalclean)
 summary(Totcaspopn.lm)
 ```
 
@@ -343,9 +351,7 @@ xkablevif(Totcaspopn.lm, title = "vif")
 ```{r, results='markup', fig.dim=c(6,4)}
 loadPkg("rpart") # Classification trees, rpart(formula, data=, method=,control=) 
 set.seed(1)
-mentaltreefit <- rpart(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data=clean, control = list(maxdepth = 25) )
-# mentaltreefit <- rpart(Kyphosis ~ Age + Number + Start, data=kyphosis, method="class", control = {rpart.control list} )
-# rpart.control(maxdepth = 30, minsplit = 20, minbucket = round(minsplit/3), cp = 0.01, maxcompete = 4, maxsurrogate = 5, usesurrogate = 2, xval = 10, surrogatestyle = 0, ...)
+mentaltreefit <- rpart(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data=finalclean, control = list(maxdepth = 25) )
 printcp(mentaltreefit) # display the results 
 # plotcp(mentaltreefit) # visualize cross-validation results 
 summary(mentaltreefit) # detailed summary of splits
