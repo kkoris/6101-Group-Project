@@ -93,7 +93,6 @@ str(clean$`Average Number of Mentally Unhealthy Days`)
 
 ## Make sure to include these in the descriptive stats Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
 
-=======
 ## Descriptive Statistics
 
 ```{r eval=FALSE}
@@ -102,8 +101,9 @@ xkablesummary(clean, title = "Summary of COVID Data")
 ```
 
 ####Creating a Correlation Matrix
+
 ##include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population
-=======
+
 
 ```{r, results='markup'}
 library(Hmisc)
@@ -204,6 +204,7 @@ plot(model1)
 
 
 ### built model with single variable
+# already used with feature selection 
 ```{r, results=TRUE}
 print('model2')
 model2 <- lm(Totcaspopn ~ Population + Menunhlthdays, clean)
@@ -230,6 +231,7 @@ plot(model4, main = 'madel4')
 
 
 ### compare three single model
+# do not need ANOVA test 
 ```{r, results=TRUE}
 anovares <- anova(model2,model3,model4)
 anovares
@@ -250,13 +252,11 @@ ggplot(clean, aes(Smokers, Totcaspopn)) +
 
 ```
 
-
 ### check for cor.test
 ```{r, results=TRUE}
 cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="pearson")
 cor.test(clean$Totcaspopn,as.numeric(clean$Population), method="spearman")
 ```
-
 
 ### t test
 ```{r,results=TRUE}
