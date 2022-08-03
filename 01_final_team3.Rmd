@@ -117,7 +117,7 @@ xkablesummary(finalclean, title = "Summary of Data")
 
 ### Creating a Correlation Matrix
 
-Include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanic + ColEduc + Socialize + HseCrowded + Smokers + Population. 
+Include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population. 
 
 ```{r, results='markup'}
 corClean<-cor(as.matrix(finalclean))
@@ -127,82 +127,23 @@ corClean<-cor(as.matrix(finalclean))
 
 ```{r, results='markup'}
 #library("kableExtra")
-xkabledply("corClean")
+#xkabledply("corClean")
 ```
 
 ## Correlation Plot
 
 ```{r, results='markup'}
-install.packages("corrplot")
+#install.packages("corrplot")
 library(corrplot)
 corrplot(corClean)
 ```
 
 ## Testing for Normality
 
-```{r, results='markup'}
-install.packages("ggpubr")
-library("ggpubr")
-ggdensity(finalclean$Totcaspopn, 
-          main = "Density plot of Total cases per Population",
-          xlab = "Total cases")
-
-ggdensity(finalclean$Population, main = "Density plot of Population",
-          xlab = "Total cases")
-
-```
-
 ## QQ Plot
 
 ```{r, results='markup'}
 qqplot(finalclean$Totcaspopn, finalclean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
-```
-
-## Sample Model
-
-```{r}
-
-reg_data <- data.frame(x = finalclean$Population,
-                   y = finalclean$Totcaspopn)
-
-reg_model <- lm(reg_data$y ~ reg_data$x, reg_data)
-
-print(reg_model)
-
-sumstats<-summary(reg_model)
-
-summary(reg_model)
-
-coef(reg_model)
-
-#get list of residuals 
-res <- resid(reg_model)
-
-#produce residual vs. fitted plot
-plot(fitted(reg_model), res)
-plot(fitted(reg_model), res,
-     xlab="Fitted Model", 
-     ylab="Residuals", 
-     main="Residual-Fitted Plot")
-
-
-#create Q-Q plot for residuals
-qqnorm(res,
-     xlab="Normal Values", 
-     ylab="Residuals", 
-     main="Normal Quantile Plot for Residuals")
-
-#add a straight diagonal line to the plot
-qqline(res, col="blue") 
-```
-
-## Built Model  
-
-To built model with linear regression.
-use dataset used for linear model 
-
-```{r, results='markup'}
-plot(reg_model)
 ```
 
 ## Good Fit Model of Linear Regression
@@ -219,8 +160,8 @@ model1$coefficients
 xkabledply(confint(model1))
 xkablevif(model1, title = "vif")
 plot(model1)
-
 ```
+
 ### Check for Correlation Test (cor.test)
 
 ```{r}
@@ -274,6 +215,7 @@ There is negative correlation between mental health days and Totcaspopn. With ev
 ```{r, results='markup'}
 xkablevif(Totcaspopn.lm, title = "vif")
 ```
+
 
 # Tree Model of Independent Variables
 
