@@ -117,7 +117,7 @@ xkablesummary(finalclean, title = "Summary of Data")
 
 ### Creating a Correlation Matrix
 
-Include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population. 
+Include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanic + ColEduc + Socialize + HseCrowded + Smokers + Population. 
 
 ```{r, results='markup'}
 corClean<-cor(as.matrix(finalclean))
@@ -126,14 +126,14 @@ corClean<-cor(as.matrix(finalclean))
 ## Correlation Matrix
 
 ```{r, results='markup'}
-#library("kableExtra")
-#xkabledply("corClean")
+library("kableExtra")
+xkabledply("corClean")
 ```
 
 ## Correlation Plot
 
 ```{r, results='markup'}
-#install.packages("corrplot")
+install.packages("corrplot")
 library(corrplot)
 corrplot(corClean)
 ```
@@ -141,7 +141,7 @@ corrplot(corClean)
 ## Testing for Normality
 
 ```{r, results='markup'}
-#install.packages("ggpubr")
+install.packages("ggpubr")
 library("ggpubr")
 ggdensity(finalclean$Totcaspopn, 
           main = "Density plot of Total cases per Population",
