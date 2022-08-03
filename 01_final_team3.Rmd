@@ -61,13 +61,13 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ## Data cleaning
 
-### Removing characters from data frame  
+Removing characters from data frame.   
 
 ```{r, results='markup'}
 new_Coundf<-Counties_Dataset[, !sapply(Counties_Dataset, is.character)]
 ```
 
-### Dropping some columns  
+Dropping data frame columns.   
 
 ```{r, results='markup'}
 
@@ -79,13 +79,13 @@ new_clean<-new_df1[, -c(10,11,12)]
 
 ```
 
-### Changing Column names  
+Changing data grame column names.  
 
 ```{r, results='markup'}
 colnames(new_clean)<- c("Totalcases","Deaths","Population", "Blacks","Natives","Asians","Hispanics","White","PDSqmile","HDSqmile","ColEduc","Socialize","HseCrowded","Diabetic","PoorHlth","Menunhlthdays","Smokers","Fluvax","RespDisease")
 ```
 
-### Removing NAs from the data frame  
+Removing NAs from the data frame.   
 
 ```{r, results='markup'}
 clean<- na.omit(new_clean) 
