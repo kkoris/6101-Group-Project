@@ -275,7 +275,7 @@ summary(reg.best10)
 
 ## Linear Regression Model 
 
-```{r}
+```{r, results='markup'}
 Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = finalclean)
 summary(Totcaspopn.lm)
 ```
@@ -284,7 +284,7 @@ There is negative correlation between mental health days and Totcaspopn. With ev
 
 ## VIF Check
 
-```{r}
+```{r, results='markup'}
 xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
