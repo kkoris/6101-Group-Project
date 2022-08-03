@@ -110,7 +110,7 @@ Remaining variables in the new data frame are Totcaspopn+ Menunhlthdays + Blacks
 
 ## Descriptive Statistics
 
-```{r eval=FALSE}
+```{r, results='markup'}
 library(ezids)
 xkablesummary(finalclean, title = "Summary of Data")
 ```
@@ -289,7 +289,6 @@ xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
 # Tree Model of Independent Variables
-
 
 ### Regression Tree #1
 
