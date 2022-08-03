@@ -126,7 +126,7 @@ corClean<-cor(as.matrix(finalclean))
 ## Correlation Matrix
 
 ```{r, results='markup'}
-library("kableExtra")
+#library("kableExtra")
 xkabledply("corClean")
 ```
 
