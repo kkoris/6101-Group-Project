@@ -26,15 +26,17 @@ options(scientific=T, digits = 3)
 # use scipen=999 to prevent scientific notation at all times
 ```
 
-## R Markdown
+## R Markdown 
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
 # Team Project - COVID Data
-The variables in the dataset are:  
-Province,	State, Tests,	Days Since 1st Case,	Total cases,	Deaths,	Population, Hispanic,	Non-Hispanic, Female,	Population Density,Air Quality,Mental Health Provider Ratio,	Smokers,Flu Vaccinated
 
-###Research Question - Does mentally unhealthy days, race(Black), education, housing and smoking status indicative of total COVID cases in population?
+### Research Question: Do mentally unhealthy days, race(Black), education, housing and smoking status have a statistically significant impact on number of total COVID cases in population?  
+
+In this study, the dependent variable (Totcaspopn) is the number of total cases per population and the independent variables are mental health days, race (black), colelge education, crowded housing, and smokers. Our research question explores whether number of mental health days, race (black), college education, crowded housing, and smoking has a statistically significant impact on the number of total COVID cases in a population? 
+
+Below is a detailed list of the variables used: 
 
 Variable |  Definition  
   :-:    |  :-- 
@@ -47,7 +49,7 @@ Menunhlthdays | average number of mentally unhealthy days
 Smokers | percentage of Smokers
 Totcaspopn | Total population over proportion *(need to fact check this)
 
-### Import data
+## Imported data
 
 ```{r import,results='markup'}
 
@@ -57,14 +59,15 @@ Counties_Dataset <- read.csv("Counties Dataset.csv")
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-### Data cleaning
-###Removing characters from data frame
+## Data cleaning
+
+### Removing characters from data frame  
 
 ```{r, results='markup'}
 new_Coundf<-Counties_Dataset[, !sapply(Counties_Dataset, is.character)]
 ```
 
-###Dropping some columns
+### Dropping some columns  
 
 ```{r, results='markup'}
 
@@ -76,33 +79,34 @@ new_clean<-new_df1[, -c(10,11,12)]
 
 ```
 
-
-#### Changing Column names
+### Changing Column names  
 
 ```{r, results='markup'}
 colnames(new_clean)<- c("Totalcases","Deaths","Population", "Blacks","Natives","Asians","Hispanics","White","PDSqmile","HDSqmile","ColEduc","Socialize","HseCrowded","Diabetic","PoorHlth","Menunhlthdays","Smokers","Fluvax","RespDisease")
 ```
 
-#####Removing NAs from the data frame
+### Removing NAs from the data frame  
 
 ```{r, results='markup'}
 clean<- na.omit(new_clean) 
 ```
 
-####Creating a new Y variable
+## Creating a new Y variable
 
-```{r, results='markup'}
+The Y variable or dependent variable is total cases per population. 
+
+```{r}
 clean$Totcaspopn<-clean$Totalcases/clean$Population
-print(clean)
+#print(clean)
 ```
 
-####Create subset of data that only include variables we are testing for- (mentally unhealthy days, race(Black), education, housing and smoking status)
+## Created subset of data for independent variables
 
 ```{r}
 finalclean<-clean[, -c(2, 5, 6, 7, 8, 9, 10, 12, 14, 15, 18, 19, 20)]
 ```
 
-###These are the remaining variables in the new data frame: Totcaspopn+ Menunhlthdays + Blacks + ColEduc + Smokers + hsecrowded +total cases + population. 
+Remaining variables in the new data frame are Totcaspopn+ Menunhlthdays + Blacks + ColEduc + Smokers + hsecrowded +total cases + population. 
 
 ## Descriptive Statistics
 
@@ -111,28 +115,31 @@ library(ezids)
 xkablesummary(finalclean, title = "Summary of Data")
 ```
 
-####Creating a Correlation Matrix
+### Creating a Correlation Matrix
+
+Include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population. 
 
 ```{r, results='markup'}
 corClean<-cor(as.matrix(finalclean))
 ```
 
-####Correlation Matrix
+## Correlation Matrix
 
 ```{r, results='markup'}
-library("kableExtra")
-xkabledply("corClean")
+#library("kableExtra")
+#xkabledply("corClean")
 ```
 
-####Correlation Plot
+## Correlation Plot
+
 ```{r, results='markup'}
 #install.packages("corrplot")
 library(corrplot)
 corrplot(corClean)
 ```
 
+## Testing for Normality
 
-##Testing for normality
 ```{r, results='markup'}
 #install.packages("ggpubr")
 library("ggpubr")
@@ -145,13 +152,15 @@ ggdensity(finalclean$Population, main = "Density plot of Population",
 
 ```
 
-###QQ Plot
+## QQ Plot
+
 ```{r, results='markup'}
 qqplot(finalclean$Totcaspopn, finalclean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
 ```
 
-####Sample Model
-```{r, results='markup'}
+## Sample Model
+
+```{r}
 
 reg_data <- data.frame(x = finalclean$Population,
                    y = finalclean$Totcaspopn)
@@ -187,14 +196,18 @@ qqnorm(res,
 qqline(res, col="blue") 
 ```
 
-### built model  
-**To built model with linear regression.** 
+## Built Model  
+
+To built model with linear regression.
+use dataset used for linear model 
+
 ```{r, results='markup'}
 plot(reg_model)
 ```
 
-##To built good fit model with linear regression.** 
-```{r,results=TRUE}
+## Good Fit Model of Linear Regression
+
+```{r}
 library(MASS)
 model <- lm(Totcaspopn ~ Population + Blacks +  Menunhlthdays + Smokers, finalclean)
 stepAIC(model,direction = 'backward')
@@ -208,65 +221,16 @@ xkablevif(model1, title = "vif")
 plot(model1)
 
 ```
+### Check for Correlation Test (cor.test)
 
-
-### built model with single variable
-```{r, results=TRUE}
-print('model2')
-model2 <- lm(Totcaspopn ~ Population + Menunhlthdays, finalclean)
-summary(model2)
-model2$coefficients
-xkabledply(confint(model2),title = 'model2')
-xkablevif(model2,title = 'model2')
-plot(model2,main = 'madel2')
-print('model3')
-model3 <- lm(Totcaspopn ~ Population + Smokers, finalclean)
-summary(model3)
-model3$coefficients
-xkabledply(confint(model3),title = 'model3')
-xkablevif(model3,title = 'model3')
-plot(model3,main = 'madel3')
-print('model4')
-model4 <- lm(Totcaspopn ~ Population + Blacks, finalclean)
-summary(model4)
-model4$coefficients
-xkabledply(confint(model4),title = 'model4')
-xkablevif(model4,title = 'model4')
-plot(model4, main = 'madel4')
-```
-
-
-### compare three single model
-```{r, results=TRUE}
-anovares <- anova(model2,model3,model4)
-anovares
-str(anovares)
-xkabledply(anovares, title = "ANOVA comparison between the models")
-```
-
-### graph
-```{r,results=TRUE}
-library(ggplot2)
-ggplot(finalclean, aes(Smokers, Totcaspopn)) +
-  geom_point() +
-  geom_smooth(method = 'lm', se = FALSE)  +
-  coord_cartesian(ylim = c(0, 0.25))
-ggplot(finalclean, aes(Smokers, Totcaspopn)) +
-  geom_point() +
-  geom_smooth(method = 'glm', se = T, method.args = list(family = 'binomial')) + coord_cartesian(ylim = c(0, 0.25))
-
-```
-
-
-### check for cor.test
-```{r, results=TRUE}
+```{r}
 cor.test(finalclean$Totcaspopn,as.numeric(clean$Population), method="pearson")
 cor.test(finalclean$Totcaspopn,as.numeric(clean$Population), method="spearman")
 ```
 
+##  T Test 
 
-### t test
-```{r,results=TRUE}
+```{r}
 t_test.ts80 = t.test(x=finalclean$Totcaspopn, conf.level=0.80)
 t_test.ts80
 t_test.ts80$conf.int
@@ -279,28 +243,10 @@ t_test.ts99$alternative
 t_test.ts99$estimate
 ```
 
+# Model of Linear Regression  
 
-### glm model
-```{r,results=TRUE}
-library(pROC)
-library(pscl)
-model5 <- glm(Totcaspopn ~ Smokers + Blacks, data = finalclean, family = "binomial")
-summary(model5)
-xkabledply(model5, title = paste("Logistic Regression :", format(formula(model5)) ))
-expcoeff = exp(coef(model5))
-xkabledply( as.table(expcoeff), title = "Exponential of coefficients in Logit Reg" , wide=T)
-xkabledply( confint(model5), title = 'confidence interval of model' )
-prob=predict(model5, type = 'response' )
-finalclean$prob=prob
-roc1 <- roc(Totcaspopn~prob, data=finalclean)
-auc(roc1) # area-under-curve prefer 0.8 or higher.
-plot(roc1)
-pR2(model5)
-```
+### Feature selection
 
-#Linear Model: 
-Totcaspopn 
-Feature selection: 
 ```{r}
 loadPkg("leaps")
 #This is essentially best fit 
@@ -314,11 +260,6 @@ plot(reg.best10, scale = "Cp", main = "Exhaustive: Cp")
 summary(reg.best10)
 ```
 
-
-#Linear Model: 
-Totcaspopn 
-
-#Feature selection: 
 ```{r}
 loadPkg("leaps")
 #This is essentially best fit 
@@ -332,7 +273,8 @@ plot(reg.best10, scale = "Cp", main = "Exhaustive: Cp")
 summary(reg.best10)
 ```
 
-####Linear Model
+## Linear Regression Model 
+
 ```{r}
 Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = finalclean)
 summary(Totcaspopn.lm)
@@ -340,13 +282,18 @@ summary(Totcaspopn.lm)
 
 There is negative correlation between mental health days and Totcaspopn. With every 1 increase in mental health days there is a -8.18e-05 decrease in total cases population (describe p-value significance). 
 
-#####Find the VIF
+## VIF Check
+
 ```{r}
 xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
-####Try with tree model - depend on levels tree / depth 
-```{r, results='markup', fig.dim=c(6,4)}
+# Tree Model of Independent Variables
+
+
+### Regression Tree #1
+
+```{r, fig.dim=c(6,4)}
 loadPkg("rpart") # Classification trees, rpart(formula, data=, method=,control=) 
 set.seed(1)
 mentaltreefit <- rpart(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data=finalclean, control = list(maxdepth = 25) )
@@ -356,10 +303,10 @@ summary(mentaltreefit) # detailed summary of splits
 # plot tree 
 plot(mentaltreefit, uniform=TRUE, main="Regression Tree")
 text(mentaltreefit, use.n=TRUE, all=TRUE, cex=.75)
-
 ```
 
-#fancyplot
+### Regression Tree #2
+
 ```{r fancyplot}
 loadPkg("rpart.plot")
 rpart.plot(mentaltreefit)
