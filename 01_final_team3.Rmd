@@ -216,7 +216,6 @@ There is negative correlation between mental health days and Totcaspopn. With ev
 xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
-
 # Tree Model of Independent Variables
 
 ### Regression Tree #1
