@@ -59,6 +59,8 @@ Counties_Dataset <- read.csv("Counties Dataset.csv")
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
+
+
 ## Data cleaning
 
 Removing characters from data frame.   
@@ -76,6 +78,7 @@ new_df <- new_Coundf[ , -c(1,2,6,7,19,22,23,24,26,27,29,30,31,32,33,34,41,45,46,
 new_df1<-new_df[, -c(16,20,21,22,23,27,28,31,32,33,34,35 )]
 
 new_clean<-new_df1[, -c(10,11,12)]
+
 
 ```
 
@@ -115,6 +118,78 @@ library(ezids)
 xkablesummary(finalclean, title = "Summary of Data")
 ```
 
+
+##Exploratory Data Analysis
+## Testing for Normality and Distribution of Variables
+
+
+```{r, results='markup'}
+library(ggpubr)
+ggdensity(finalclean$Totcaspopn, main = "Density plot of Total Cases Per Population", xlab = "Total Cases Per Population")
+ggdensity(finalclean$Population, main = "Density plot of Population", xlab = "Population")
+ggdensity(finalclean$Blacks, main = "Density plot of Black People", xlab = "Population of Black People")
+ggdensity(finalclean$ColEduc, main = "Density plot of People with College Education", xlab = "College Education")
+ggdensity(finalclean$HseCrowded, main = "Density plot of Crowded Housing", xlab = "Crowded Housing")
+ggdensity(finalclean$Menunhlthdays, main = "Density plot of Mental Unhealthy Days", xlab = "Mental Unhealthy Days")
+ggdensity(finalclean$Smokers, main = "Density plot of Smokers", xlab = "Smokers")
+library(ggplot2)
+ggplot(finalclean, aes(x=finalclean$Totalcases)) + geom_density(alpha=0.3)
+ggplot(finalclean, aes(x=Totcaspopn)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases per Population")
+ggplot(finalclean, aes(x=Population)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Population")
+ggplot(finalclean, aes(x=Blacks)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Black")
+ggplot(finalclean, aes(x=ColEduc)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of College Education")
+ggplot(finalclean, aes(x=HseCrowded)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Crowded Housing")
+ggplot(finalclean, aes(x=Menunhlthdays)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Mental Health Days")
+ggplot(finalclean, aes(x=finalclean$Smokers)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Smokers")
+plot(finalclean$Population)
+plot(finalclean$Totalcases)
+plot(finalclean$Blacks)
+plot(finalclean$ColEduc)
+plot(finalclean$HseCrowded)
+plot(finalclean$Menunhlthdays)
+plot(finalclean$Smokers)
+plot(finalclean$Totcaspopn)
+plot(finalclean)
+
+```
+
+## QQ Plots- Testing for Normality 
+
+```{r, results='markup'}
+#qqplot(finalclean$Totcaspopn, finalclean$Population, main = "QQ Plot of Total cases Per Population", xlab = "County Population")
+
+#create Q-Q plot
+qqnorm(finalclean$Totcaspopn,  main = "QQ Plot of Total cases Per Population")
+qqline(finalclean$Totcaspopn)
+qqnorm(finalclean$Population,  main = "QQ Plot of Total cases Per Population")
+qqline(finalclean$Population)
+qqnorm(finalclean$Menunhlthdays, main = "QQ Plot of Mental Unhealthy Day")
+qqline(finalclean$Menunhlthdays)
+qqnorm(finalclean$Blacks, main = "QQ Plot of the Black Population")
+qqline(finalclean$Blacks)
+qqnorm(finalclean$HseCrowded, main = "QQ Plot of the Crowded Housing")
+qqline(finalclean$HseCrowded)
+qqnorm(finalclean$Smokers, main = "QQ Plot of the Smokers")
+qqline(finalclean$Smokers)
+
+
+```
+
+## The relationship between total cases per population and each of the explanatory variables
+
+```{r, results='markup'}
+
+ggplot(finalclean, aes(x=Menunhlthdays, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=Blacks, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=finalclean$Population, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=finalclean$ColEduc, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=finalclean$HseCrowded, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=finalclean$Smokers, y=Totcaspopn)) + geom_point()
+
+
+```
+
+
 ### Creating a Correlation Matrix
 
 Include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population. 
@@ -126,8 +201,8 @@ corClean<-cor(as.matrix(finalclean))
 ## Correlation Matrix
 
 ```{r, results='markup'}
-#library("kableExtra")
-#xkabledply("corClean")
+library(ezids)
+xkabledply(corClean)
 ```
 
 ## Correlation Plot
@@ -138,13 +213,6 @@ library(corrplot)
 corrplot(corClean)
 ```
 
-## Testing for Normality
-
-## QQ Plot
-
-```{r, results='markup'}
-qqplot(finalclean$Totcaspopn, finalclean$Population, main = "QQ Plot of Total cases", xlab = "County Population")
-```
 
 ## Good Fit Model of Linear Regression
 
