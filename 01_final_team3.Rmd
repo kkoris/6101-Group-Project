@@ -146,10 +146,7 @@ library(corrplot)
 corrplot(corClean)
 ```
 
-## Testing for Normality
-
-
-## Distribution of Variables
+## Testing for Normality and Distribution of Variables
 
 
 ```{r, results='markup'}
@@ -175,21 +172,35 @@ ggplot(finalclean, aes(x=finalclean$Totalcases)) + geom_density(alpha=0.3)
 
 ggplot(finalclean, aes(x=Totcaspopn)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases per Population")
 
-ggplot(finalclean, aes(x=Totalcases)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases")
+ggplot(finalclean, aes(x=Population)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases")
 
-ggplot(finalclean, aes(x=Menunhlthdays, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=Blacks)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases")
 
-```
+ggplot(finalclean, aes(x=ColEduc)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases")
 
-```{r, results='markup'}
+ggplot(finalclean, aes(x=HseCrowded)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases")
+
+ggplot(finalclean, aes(x=Menunhlthdays)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases")
+
+ggplot(finalclean, aes(x=finalclean$Smokers)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases")
+
+plot(finalclean$Population)
+
+plot(finalclean$Totalcases)
+
+plot(finalclean$Blacks)
+
+plot(finalclean$ColEduc)
+
+plot(finalclean$HseCrowded)
+
+plot(finalclean$Menunhlthdays)
+
+plot(finalclean$Smokers)
+
+plot(finalclean$Totcaspopn)
+
 plot(finalclean)
-
-```
-
-```{r, results='markup'}
-vars <- c("genhz", "clay", "total_frags_pct",
-          "phfield", "effclass")
-summary(h[, vars])
 
 ```
 
@@ -220,9 +231,19 @@ qqline(finalclean$Smokers)
 
 
 ```
-## Testing for linearity
+## The relationship between total cases per population and each of the explanatory variables
+
+```{r, results='markup'}
+
+ggplot(finalclean, aes(x=Menunhlthdays, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=Blacks, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=finalclean$Population, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=finalclean$ColEduc, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=finalclean$HseCrowded, y=Totcaspopn)) + geom_point()
+ggplot(finalclean, aes(x=finalclean$Smokers, y=Totcaspopn)) + geom_point()
 
 
+```
 
 
 ## Good Fit Model of Linear Regression
