@@ -161,7 +161,7 @@ plot(finalclean)
 #create Q-Q plot
 qqnorm(finalclean$Totcaspopn,  main = "QQ Plot of Total cases Per Population")
 qqline(finalclean$Totcaspopn)
-qqnorm(finalclean$Population,  main = "QQ Plot of Total cases Per Population")
+qqnorm(finalclean$Population,  main = "QQ Plot of  Population")
 qqline(finalclean$Population)
 qqnorm(finalclean$Menunhlthdays, main = "QQ Plot of Mental Unhealthy Day")
 qqline(finalclean$Menunhlthdays)
@@ -171,38 +171,81 @@ qqnorm(finalclean$HseCrowded, main = "QQ Plot of the Crowded Housing")
 qqline(finalclean$HseCrowded)
 qqnorm(finalclean$Smokers, main = "QQ Plot of the Smokers")
 qqline(finalclean$Smokers)
-
+qqnorm(finalclean$ColEduc, main = "QQ Plot of the College Education")
+qqline(finalclean$ColEduc)
 
 ```
-
-## The relationship between total cases per population and each of the explanatory variables
+##Removing outliers from `Population`, `Blacks`, and `College Education`. Using the `ezids::outlierKD2()` function to remove the outliers for `Population`, `Blacks`, and `College Education`
 
 ```{r, results='markup'}
-
-ggplot(finalclean, aes(x=Menunhlthdays, y=Totcaspopn)) + geom_point()
-ggplot(finalclean, aes(x=Blacks, y=Totcaspopn)) + geom_point()
-ggplot(finalclean, aes(x=finalclean$Population, y=Totcaspopn)) + geom_point()
-ggplot(finalclean, aes(x=finalclean$ColEduc, y=Totcaspopn)) + geom_point()
-ggplot(finalclean, aes(x=finalclean$HseCrowded, y=Totcaspopn)) + geom_point()
-ggplot(finalclean, aes(x=finalclean$Smokers, y=Totcaspopn)) + geom_point()
-
-
+library(ezids)
+ClnData = outlierKD2(finalclean, Population, rm=TRUE, boxplt=TRUE, histogram=TRUE, qqplt=TRUE) 
 ```
 
+```{r, results='markup'}
+ClnData = outlierKD2(ClnData, Blacks, rm=TRUE, boxplt=TRUE, histogram=TRUE, qqplt=TRUE)
+```
+
+```{r, results='markup'}
+ClnData = outlierKD2(ClnData, ColEduc, rm=TRUE, boxplt=TRUE, histogram=TRUE, qqplt=TRUE)
+
+```
+```{r, results='markup'}
+ClnData = outlierKD2(ClnData, Totcaspopn, rm=TRUE, boxplt=TRUE, histogram=TRUE, qqplt=TRUE)
+```
+
+
+## QQ Plot after removing outliers
+
+```{r}
+qqnorm(ClnData$Population, main="Q-Q plot of Population with outlier removed") 
+qqline(ClnData$Population)
+
+qqnorm(ClnData$Blacks, main="Q-Q plot of Blacks with outlier removed") 
+qqline(ClnData$Blacks)
+
+qqnorm(ClnData$ColEduc, main="Q-Q plot of College Education with outlier removed") 
+qqline(ClnData$ColEduc)
+
+qqnorm(ClnData$Totcaspopn, main="Q-Q plot of College Education with outlier removed") 
+qqline(ClnData$Totcaspopn)
+
+```
+##Histograms of all data after removing outliers
+
+```{r, results='markup'}
+library(ggplot2)
+ggplot(ClnData, aes(x=Totcaspopn)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Total Cases per Population")
+ggplot(ClnData, aes(x=Population)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Population")
+ggplot(ClnData, aes(x=Blacks)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Black")
+ggplot(ClnData, aes(x=ColEduc)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of College Education")
+ggplot(ClnData, aes(x=HseCrowded)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Crowded Housing")
+ggplot(ClnData, aes(x=Menunhlthdays)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Mental Health Days")
+ggplot(ClnData, aes(x=finalclean$Smokers)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Smokers")
+```
+
+##Removing NAs from the new data frame without outliers
+
+```{r, results='markup'}
+AclnData<- na.omit(ClnData) 
+```
 
 ### Creating a Correlation Matrix
 
 Include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population. 
 
 ```{r, results='markup'}
-corClean<-cor(as.matrix(finalclean))
+corClean<-cor(as.matrix(AclnData))
+corClean
 ```
 
 ## Correlation Matrix
 
 ```{r, results='markup'}
 library(ezids)
+
 xkabledply(corClean)
+
 ```
 
 ## Correlation Plot
@@ -218,11 +261,11 @@ corrplot(corClean)
 
 ```{r}
 library(MASS)
-model <- lm(Totcaspopn ~ Population + Blacks +  Menunhlthdays + Smokers, finalclean)
+model <- lm(Totcaspopn ~ Population + Blacks +  Menunhlthdays + Smokers + ColEduc, AclnData)
 stepAIC(model,direction = 'backward')
 print('lm(formula = Totcaspopn ~ Population + Blacks +
      Menunhlthdays + Smokers, clean) is good fit model')
-model1 <- lm(Totcaspopn ~ Population + Blacks + Menunhlthdays + Smokers, finalclean)
+model1 <- lm(Totcaspopn ~ Population + Blacks + Menunhlthdays + Smokers + ColEduc, AclnData)
 summary(model1)
 model1$coefficients
 xkabledply(confint(model1))
@@ -233,23 +276,28 @@ plot(model1)
 ### Check for Correlation Test (cor.test)
 
 ```{r}
-cor.test(finalclean$Totcaspopn,as.numeric(clean$Population), method="pearson")
-cor.test(finalclean$Totcaspopn,as.numeric(clean$Population), method="spearman")
+cor.test(AclnData$Totcaspopn,as.numeric(AclnData$Population), method="pearson")
+cor.test(AclnData$Totcaspopn,as.numeric(AclnData$Population), method="spearman")
+
+cor.test(AclnData$Totcaspopn,as.numeric(AclnData$Menunhlthdays), method="pearson")
+cor.test(AclnData$Totcaspopn,as.numeric(AclnData$Menunhlthdays), method="spearman")
+
 ```
 
 ##  T Test 
 
 ```{r}
-t_test.ts80 = t.test(x=finalclean$Totcaspopn, conf.level=0.80)
+t_test.ts80 = t.test(x=AclnData$Totcaspopn, conf.level=0.80)
 t_test.ts80
 t_test.ts80$conf.int
 t_test.ts80$alternative
 t_test.ts80$estimate
-t_test.ts99 = t.test(x=finalclean$Totcaspopn, conf.level=0.99)
+t_test.ts99 = t.test(x=AclnData$Totcaspopn, conf.level=0.99)
 t_test.ts99
 t_test.ts99$conf.int
 t_test.ts99$alternative
 t_test.ts99$estimate
+
 ```
 
 # Model of Linear Regression  
@@ -257,9 +305,10 @@ t_test.ts99$estimate
 ### Feature selection
 
 ```{r}
+
 loadPkg("leaps")
 #This is essentially best fit 
-reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers + Population, data = finalclean, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
+reg.best10 <- regsubsets(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers + Population, data = AclnData, nvmax = 15, nbest = 1, method = "exhaustive")  # leaps::regsubsets() - Model selection by exhaustive (default) search, forward or backward stepwise, or sequential replacement
 #The plot will show the Adjust R^2 when using the variables across the bottom
 plot(reg.best10, scale = "adjr2", main = "Exhaustive: Adjusted R^2")
 plot(reg.best10, scale = "r2", main = "Exhaustive: R^2")
@@ -267,16 +316,18 @@ plot(reg.best10, scale = "r2", main = "Exhaustive: R^2")
 plot(reg.best10, scale = "bic", main = "Exhaustive: BIC")
 plot(reg.best10, scale = "Cp", main = "Exhaustive: Cp")
 summary(reg.best10)
+
 ```
 
 ## Linear Regression Model 
 
 ```{r, results='markup'}
-Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data = finalclean)
+
+Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers + Population, data = AclnData)
 summary(Totcaspopn.lm)
+
 ```
 
-There is negative correlation between mental health days and Totcaspopn. With every 1 increase in mental health days there is a -8.18e-05 decrease in total cases population (describe p-value significance). 
 
 ## VIF Check
 
@@ -289,9 +340,10 @@ xkablevif(Totcaspopn.lm, title = "vif")
 ### Regression Tree #1
 
 ```{r, fig.dim=c(6,4)}
+library(ezids)
 loadPkg("rpart") # Classification trees, rpart(formula, data=, method=,control=) 
 set.seed(1)
-mentaltreefit <- rpart(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data=finalclean, control = list(maxdepth = 25) )
+mentaltreefit <- rpart(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers, data=AclnData, control = list(maxdepth = 50) )
 printcp(mentaltreefit) # display the results 
 # plotcp(mentaltreefit) # visualize cross-validation results 
 summary(mentaltreefit) # detailed summary of splits
@@ -307,5 +359,11 @@ loadPkg("rpart.plot")
 rpart.plot(mentaltreefit)
 loadPkg("rattle") # For fancyRpartPlot (Trees) Answer "no" on installing from binary source
 fancyRpartPlot(mentaltreefit)
+```
+```{r}
+
+new <- data.frame(ColEduc=16, Blacks=9, Menunhlthdays=10, Population=10000, HseCrowded=13,Smokers= 3)
+
+predict(mentaltreefit, newdata = new)
 ```
 
