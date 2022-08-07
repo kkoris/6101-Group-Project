@@ -362,10 +362,9 @@ loadPkg("rattle") # For fancyRpartPlot (Trees) Answer "no" on installing from bi
 fancyRpartPlot(mentaltreefit)
 ```
 ```{r}
-#define new player
+
 new <- data.frame(ColEduc=16, Blacks=9, Menunhlthdays=10, Population=10000, HseCrowded=13,Smokers= 3)
 
-#use pruned tree to predict salary of this player
 predict(mentaltreefit, newdata = new)
 ```
 
