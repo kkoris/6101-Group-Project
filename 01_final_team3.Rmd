@@ -1,6 +1,6 @@
 ---
-title: "01_final"
-author: "Team3"
+title: "The Double Crisis; The Nexus Between Mental Health and COVID-19 Infections"
+author: "Team 3"
 date: "`r Sys.Date()`"
 output: 
   html_document:
@@ -26,17 +26,27 @@ options(scientific=T, digits = 3)
 # use scipen=999 to prevent scientific notation at all times
 ```
 
-## R Markdown 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# Chapter 1: Introduction
+## Basic Information
 
-# Team Project - COVID Data
+COVID-19 is an upper respiratory disease that has afflicted millions of people worldwide. It was first discovered in the United States in March 2020, where it rapidly spread to communities nationwide. There have been a number of co-morbidities that affected the severity of the illness’ course, however, scientists have not been able to pinpoint the exact “social” co-morbidities that exacerbate the disease. In this group project, we aim to look at the factors that most affect the diagnosis of a COVID-19 infection. The research question was informed by both the team’s assumptions and general knowledge of the disproportionate impact of the COVID-19 pandemic among people living with mental illnesses. Existing literature further grounded the team’s desire to examine the relationship between mental illness and the COVID-19 pandemic.  
 
-### Research Question: Do mentally unhealthy days, race(Black), education, housing and smoking status have a statistically significant impact on number of total COVID cases in population?  
+To study this relationship, we will use the multiple regression model, which allows for the inclusion of multiple explanatory variables, thereby improving the model’s efficiency and minimizing bias. This model will be used to test the hypothesis that there is a positive correlation between the number of mental health days (explanatory variable) and the number of COVID-related cases (dependent variable). Prior to any statistical analysis, data will be explored to ensure its normality and linearity, in addition to checking for multicollinearity, autocorrelation, and homoscedasticity. In addition, 
+Our research will follow a time-line by which the R-markdown file and Summary paper will be finalized by July 27 for review, and the presentation will be submitted by August 1st.
 
-In this study, the dependent variable (Totcaspopn) is the number of total cases per population and the independent variables are mental health days, race (black), colelge education, crowded housing, and smokers. Our research question explores whether number of mental health days, race (black), college education, crowded housing, and smoking has a statistically significant impact on the number of total COVID cases in a population? 
 
-Below is a detailed list of the variables used: 
+## What do we know about this dataset?
+This dataset was extracted from early COVID-19 data starting 4/20/2020. This data included demographic information, health status, population numbers, health conditions, housing status and other social/economic variables. This dataset includes the basic information of people who were diagnosed with COVID-19. This data is incredibly important and informational because it paints a landscape of what people were going through while the pandemic began. 
+
+
+## Limitations of Data Set
+This data was extensive and included a lot of variables that were useful, however, they did include too many variables that were not necessary in our modeling and analysis. 
+
+
+# Chapter 2: Cleaning the Data
+
+## Variables Used
 
 Variable |  Definition  
   :-:    |  :-- 
@@ -49,6 +59,14 @@ Menunhlthdays | average number of mentally unhealthy days
 Smokers | percentage of Smokers
 Totcaspopn | Total population over proportion *(need to fact check this)
 
+
+## What analysis has already been completed related to the content in your dataset?
+
+Our original dataset, “Counties Dataset.csv”,  was organized into 83 columns (each representing a variable in the dataset) and 3145 rows of data which was a large enough dataset to assume that our results would not be skewed by a lack of data.  Prior to analyzing the dataset, we cleaned the dataset to rid the dataset of data that was not representative of variables that we would be using for our analysis. Thus in the clean version of our dataframe, or final clean,  we included the dependent variable of Total Cases per Population (Totcaspopn) and the independent variables Total Cases, Population, Blacks, College Education (ColEduc), Crowded Housing (HseCrowded), Average Mentally Unhealthy Days (Menunhlthdays), and Smokers. Additionally, final clean, the cleaned dataset, rid the initial dataset of outlier or ‘NA’ data points represented in R that would skew the results of our analysis. 
+
+Furthermore, prior to conducting research on our Linear Regression and Tree Models, we created the Y variable, Totcaspopn, from the cleaned dataset. The Y variable represents the number of Total Cases of the Population variable in the cleaned dataset. Then we created a subset of data from our cleaned dataset titled “finalclean” which includes our dependent variable, Totcaspopn, and independent variables Population, Blacks, College Education (ColEduc), Crowded Housing (HseCrowded), Average Mentally Unhealthy Days (Menunhlthdays), and Smokers. 
+
+
 ## Imported data
 
 ```{r import,results='markup'}
@@ -60,16 +78,13 @@ Counties_Dataset <- read.csv("Counties Dataset.csv")
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 
-
-## Data cleaning
-
-Removing characters from data frame.   
+## Removing characters from data frame.   
 
 ```{r, results='markup'}
 new_Coundf<-Counties_Dataset[, !sapply(Counties_Dataset, is.character)]
 ```
 
-Dropping data frame columns.   
+## Dropping data frame columns.   
 
 ```{r, results='markup'}
 
@@ -82,13 +97,13 @@ new_clean<-new_df1[, -c(10,11,12)]
 
 ```
 
-Changing data frame column names.  
+## Changing data frame column names.  
 
 ```{r, results='markup'}
 colnames(new_clean)<- c("Totalcases","Deaths","Population", "Blacks","Natives","Asians","Hispanics","White","PDSqmile","HDSqmile","ColEduc","Socialize","HseCrowded","Diabetic","PoorHlth","Menunhlthdays","Smokers","Fluvax","RespDisease")
 ```
 
-Removing NAs from the data frame.   
+## Removing NAs from the data frame.   
 
 ```{r, results='markup'}
 clean<- na.omit(new_clean) 
@@ -119,8 +134,15 @@ xkablesummary(finalclean, title = "Summary of Data")
 ```
 
 
-##Exploratory Data Analysis
+# Chapter 3: Exploratory Data Analysis
 ## Testing for Normality and Distribution of Variables
+
+After reading in all the data into R, density plots and histograms for each of the explanatory variables were produced to review their distribution. This review revealed that four variables- Total cases per Population, Population, Blacks, and College Education had significant outliers that would have influenced the model results. In addition, the normality test for each of the variables showed a significant lack of normality in the same variables. 
+
+To correct for the outlier problem, outliers were removed from each of these variables thereby reducing the total number of observations from 3001 to 2057. This is still a reasonably large sample to return reliable results.
+
+While the histogram and normality tests following the removal of outliers still show a lack of normality, they demonstrated a significant difference and improvement with the data distribution and this improved the reliability of the model analysis. 
+
 
 
 ```{r, results='markup'}
@@ -175,7 +197,7 @@ qqnorm(finalclean$ColEduc, main = "QQ Plot of the College Education")
 qqline(finalclean$ColEduc)
 
 ```
-##Removing outliers from `Population`, `Blacks`, and `College Education`. Using the `ezids::outlierKD2()` function to remove the outliers for `Population`, `Blacks`, and `College Education`
+## Removing outliers from `Population`, `Blacks`, and `College Education`. Using the `ezids::outlierKD2()` function to remove the outliers for `Population`, `Blacks`, and `College Education`
 
 ```{r, results='markup'}
 library(ezids)
@@ -211,7 +233,8 @@ qqnorm(ClnData$Totcaspopn, main="Q-Q plot of College Education with outlier remo
 qqline(ClnData$Totcaspopn)
 
 ```
-##Histograms of all data after removing outliers
+
+## Histograms of all data after removing outliers
 
 ```{r, results='markup'}
 library(ggplot2)
@@ -224,15 +247,16 @@ ggplot(ClnData, aes(x=Menunhlthdays)) + geom_histogram(fill="steelblue", color="
 ggplot(ClnData, aes(x=finalclean$Smokers)) + geom_histogram(fill="steelblue", color="black") + ggtitle("Histogram of Smokers")
 ```
 
-##Removing NAs from the new data frame without outliers
+## Removing NAs from the new data frame without outliers
 
 ```{r, results='markup'}
 AclnData<- na.omit(ClnData) 
 ```
 
-### Creating a Correlation Matrix
+## Creating a Correlation Matrix
 
-Include these only Totcaspopn ~ Menunhlthdays + Blacks + Hispanics + Asians + White + PDSqmile + HDSqmile + ColEduc + Socialize + HseCrowded + Diabetic + PoorHlth + Smokers + Fluvax +RespDisease + Population. 
+The team’s initial question of interest tests the linear relationship between the number of cases (the response variable), and the number of mental health days. A correlation matrix analysis revealed a weak  negative relationship demonstrated by a coefficient of -0.0334. With this exploratory finding, the team modified the question by creating a new response variable called Total cases per population, which was created by dividing the total cases by population. Furthermore, using the correlation matrix, the explanatory variables were selected based on the strength of their correlation coefficients with the new response variable (Total cases per population).
+
 
 ```{r, results='markup'}
 corClean<-cor(as.matrix(AclnData))
@@ -273,7 +297,7 @@ xkablevif(model1, title = "vif")
 plot(model1)
 ```
 
-### Check for Correlation Test (cor.test)
+## Check for Correlation Test (cor.test)
 
 ```{r}
 cor.test(AclnData$Totcaspopn,as.numeric(AclnData$Population), method="pearson")
@@ -300,9 +324,26 @@ t_test.ts99$estimate
 
 ```
 
-# Model of Linear Regression  
+# Chapter 4: Modeling
 
-### Feature selection
+For our research we have selected a linear regression model and tree model since we seek to determine the linear relationship between the number of Total COVID Cases per Population   COVID-cases per county and the independent variable representing race (Blacks), College Education (ColEduc), Crowded Housing (HseCrowded), Average Mentally Unhealthy Days per County (Menunhlthdays), and Smokers.
+
+For the multiple linear regression, we seek to measure whether there is an existing statistically significant relationship between the dependent variable and independent variables. While building this model, we performed an initial Feature Selection test to determine which variables to select for the linear regression model.  The Feature Selection Test shows the R2 and adjusted R2 values, BIC, and CP models. Of these models, we selected the independent variables, or variables representing average number of mentally unhealthy days (menunhlthdays), race (Blacks), college education (ColEduc), crowded housing (HseCrowded) and Smokers, for our multiple linear regression from the Exhaustive CP model. Since the R2 and Adjusted R2 values are a low value of 0.0099 and 0.0082 this suggests that less than 1 % of total covid cases per population are explained by amount of race (Blacks), College Education (ColEduc), Crowded Housing (HseCrowded), Average Mentally Unhealthy Days per County (Menunhlthdays), and Smokers or the independent variables in the regression model. 
+
+After reviewing the linear regression model, our results demonstrated a negative correlation between the dependent variable of Total Cases per Population (Totcaspopn) and the variable of interest–mental health days (Menunhlthdays). For example for every additional day of mental unhealth, the number of Total Cases per Population decreases by -9.880e-06.  
+
+
+## Feature selection
+
+R-squared value (value range 0-1) describes how well the input variable explains the output variable. In univariate linear regression, the larger the R-squared, the better the fit. When more variables are added, adjusted R-squared is used. Because for R-squared, as long as more variables are added, regardless of whether the added variable has a relationship with the output variable, R-squared will either remain the same or increase. So adjusted R-squared adds a penalty term to those variables that are added and do not improve the performance of the model. So if univariate linear regression, use R-squared evaluation, multivariate, use adjusted R-squared.
+
+For our analysis we observed the R2 and Adjusted R2 values. Since these values are a low value of 0.0099 and 0.0082 respectively, this suggests that less than 1 % of total covid cases per population are explained by amount of race (Blacks), College Education (ColEduc), Crowded Housing (HseCrowded), Average Mentally Unhealthy Days per County (Menunhlthdays), and Smokers or the independent variables in the regression model. 
+
+BIC selects a model that best fits the existing data from the fitting point of view. One benefit of BIC is that it simplifies the model and avoids overfitting. Because there may not be many parameters that are really important in a model, if all parameters are considered, it will lead to overfitting. And the explanatory power of the model will become stronger if the parameters are less.
+
+CP can help you choose among multiple regression models. It helps you strike an important balance in the number of predictors in your model. Cp compares the precision and bias of the full model to a model with a subset of predictors.
+
+
 
 ```{r}
 
@@ -321,6 +362,8 @@ summary(reg.best10)
 
 ## Linear Regression Model 
 
+Results demonstrated a significant negative correlation between the dependent variable(Totcaspopn) and mental health days (Menunhlthdays). Significant positive correlation between race (Black) and dependent variable. Since VIF test revealed that values were all no greater than 5, we can conclude that there is not an issue with the amount of collinearity between independent variables.
+
 ```{r, results='markup'}
 
 Totcaspopn.lm <- lm(Totcaspopn ~ Menunhlthdays + Blacks + ColEduc + HseCrowded + Smokers + Population, data = AclnData)
@@ -329,6 +372,8 @@ summary(Totcaspopn.lm)
 ```
 
 
+We performed a VIF test to test the multicollinearity of the variables, and to determine if collinearity existed between 3 or more variables. This is an important test because the presence of multicollinearity among the variables may produce unstable or unreliable results from the linear regression model. 
+
 ## VIF Check
 
 ```{r, results='markup'}
@@ -336,9 +381,16 @@ xkablevif(Totcaspopn.lm, title = "vif")
 ```
 
 
-# Tree Model of Independent Variables
+# Chapter 5: Tree Model of Independent Variables
 
-### Regression Tree #1
+For the purpose of our analysis in determining if there was a statistically significant relationship between the number of total COVID cases per population, or the dependent variable, and race (black), college education, smoking, living in crowded housing and average number of mentally unhealthy days per county, we decided to conduct a tree model analysis to confirm whether our results from the linear regression model analysis could be duplicated using another model. 
+
+With this understanding, the tree model indicates that 53 percent (1089) of the overall county population has a college education of less than 18 percent.  About 11 percent or less of the black population (1034), live in these counties with a college education of less than 18 percent.  
+
+For instance, based on the model, counties with less than 18 percent of a college education, and less than 11 percent of the black population, with at least 10 mental health days, crowded housing of 13 percent, and a smoking rate of about 3 percent  are likely to experience a 0.022%  increase  in the Total cases per population.	
+
+
+## Regression Tree #1
 
 ```{r, fig.dim=c(6,4)}
 library(ezids)
@@ -353,7 +405,8 @@ plot(mentaltreefit, uniform=TRUE, main="Regression Tree")
 text(mentaltreefit, use.n=TRUE, all=TRUE, cex=.75)
 ```
 
-### Regression Tree #2
+
+## Regression Tree #2
 
 ```{r fancyplot}
 loadPkg("rpart.plot")
